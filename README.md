@@ -1,5 +1,8 @@
 # cytoChain
-This is a first prototype of cytoChain a Shiny web app to handle data high-dimensional cytofluorometry datasets. 
+This first prototype of cytoChain a Shiny web app to handle data high-dimensional cytofluorometry datasets is currently deployed at the shinyapps.io servers and it is available at the following link:  https://abbatidanilo.shinyapps.io/cytoChain/
+
+In case you are interested in cytoChain for your cytometric analisys drop a mail to abbati.danilo@hsr.it and I will provide you credential for the complete access.
+
 It has been deployed by Danilo Abbati and Francesco Manfredi at the Experimental Hematology department of the San Raffaele Hospital - Milan (Italy). 
 cytoChain has been published in the European Journal of Immunology (EJI) with the title: "Flow cytometry data mining by cytoChain identifies determinants of exhaustion and stemness in TCR-engineered T cells" (doi: 10.1002/eji.202049103). 
 
