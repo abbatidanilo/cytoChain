@@ -1,5 +1,5 @@
 # cytoChain
-This first prototype of cytoChain a Shiny web app to handle data high-dimensional cytofluorometry datasets is currently deployed at the shinyapps.io servers and it is available at the following link:  https://abbatidanilo.shinyapps.io/cytoChain/
+This first prototype of cytoChain, a Shiny web app to handle high-dimensional cytofluorometry datasets, is currently deployed at the shinyapps.io servers and it is available at the following link:  https://abbatidanilo.shinyapps.io/cytoChain/
 
 In case you are interested in cytoChain for your cytometric analisys drop a mail with a description of your goals, expriments and aims to abbati.danilo@hsr.it. 
 I will provide you the credentials for a complete access.
