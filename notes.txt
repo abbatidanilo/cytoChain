@@ -1,0 +1,123 @@
+cytoChain4.25
+
+Implementazione cluster_signature (da cytoAdvance4.12) 
+
+Verificare i meccanismi di validate() nella valutazione della tabella dei meta_sample
+
+video tutorial https://youtu.be/0KMfPESrNSc
+
+verifica https://community.rstudio.com/t/functions-with-the-same-identical-names-in-r-packages/43680 using also https://towardsdatascience.com/r-you-sure-youre-using-this-package-8ce265a990b0 (NCmisc::list.functions.in.file())
+
+Implementare clustertend (https://towardsdatascience.com/clustering-evaluation-strategies-98a4006fcfc)
+
+Aggiungere le percentuali sui vari tags nelle tabelle generate sui fenotipi. 
+Occorre raggruppare le quantità dei fenotipi uguali come nei fogli xlsx per Francesco
+
+Usa Shynifeedback per migliorare le risposte
+
+Sul manuale: tempo tsne = kilo_eventi/30 = minuti
+temp flowVS = 20*11*nr.dimension/60 = minuti
+8*21=168 sec (9k)
+5*21=105 sec (4.5k)
+5 * 21 *k_events/1000
+
+Online:
+warning: using reticulate but python was not specified; will use python at /usr/bin/python3 
+2020-03-14T14:15:02.921512+00:00 shinyapps[1946501]: Did you forget to set the RETICULATE_PYTHON environment variable in your .Rprofile before publishing?
+On installation
+
+aggiungi nuovi downsampling algorithms: https://github.com/talegari/solitude e https://github.com/david-cortes/isotree
+
+sostituisci shinycssloaders perchè la nuova versione 0.3.0 non funziona
+
+umap multithreading or uwot
+
+provare isotree e stray (outliers detection packages) per il downsampling
+
+aggiungere filtro su marker table nel metadata editing
+
+aggiungere command/parameter history 
+
+try to collect more info from tsne output
+
+
+da cambiare nella versione con cytoset:
+	il time_step check su UI.R ed i relativi controlli su server.R
+	la funzione trimws in edit metadata
+	accept = ".zip" in fileInput() linea 1518
+	il controllo in loading_fS (both in fcs e zip load format) fSresult <- paste0("The sample nr. ", as.character(i), "  does not contain any event")
+	sample_score$sample_id <- as.character(rep(fFvectorName[i], 101)) con  sample_score$sample_id <- as.character(rep(fFvectorName[i], nrow(sample_score))) 
+	cytoset i controlli inputId = "map_limit" e inputId = "mapMax"
+	il resume degli eventi: metaResume(capture.output(list(sample_event, tag1_event, tag2_event, tag3_event, tag4_event))) e i corrispondenti output$downloadmetaResume e  capture.output(metaResume(), file = "./tmpdata/meta_resume.csv")
+	limit = input$map_limit, maxCell = input$mapMax nella funzione map_gen
+	cambiamenti nella map_gen e map_plot_comp e su server.R in if(length(dI.map())==2) che diventa: if(length(dI.map())==3)
+	cambiamenti nel file ui.r
+	cambia ancora in runMeta:  mt_in[,7] <- as.Date(x = mt_in[,7],format="%m/%d/%Y")
+	cambia in flowSOM_plot: PlotMarker(fsom = mst, marker = marker_name[[i]], title = vectorTitle[[i]], refMarkers = mst$map$colsUsed[i])
+		PlotStars(fsom = mst, markers = marker_name, title = "markers in grid layout", legend = TRUE, view = "grid")
+		PlotNumbers(fsom = mst, title = "Cluster Numbers in MST")
+		PlotStars(fsom = mst, markers = marker_name, title = "markers in MST layout")
+		e tutta la visualizzazione (non stampa più in png)
+	cambia in map_plot_comp   map_df <- na.omit(map_df) #introduced after the mapping limitation
+	cambia in plot_labeling   map_res <- na.omit(map_res) #introduced after the mapping limitation
+ecc..ecc.. troppi aggiornamenti -> meglio ripartire dall'ultima versione disponibile ed introdurre i cytoset
+
+https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html
+https://rpubs.com/pg2000in/ClusterValidationStatistics but it implies the re-clustering on only some specific algorithms
+Try the clValid or the Cluster R packages for cluster validation
+https://stats.stackexchange.com/questions/21807/evaluation-measures-of-goodness-or-validity-of-clustering-without-having-truth
+
+deployment:
+https://shiny.rstudio.com/articles/deployment-local.html
+https://rstudio.github.io/learnr/publishing.html
+https://neerajdhanraj.medium.com/easy-steps-to-develop-and-publish-your-first-r-package-e5f1a5c5f04c
+https://www.mango-solutions.com/packaging-shiny-applications-a-deep-dive/
+https://www.linode.com/docs/guides/how-to-deploy-rshiny-server-on-ubuntu-and-debian/
+https://www.r-bloggers.com/2017/12/serving-shiny-apps-in-the-internet-with-your-own-server/
+https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/
+https://www.charlesbordet.com/en/guide-shiny-aws/#
+https://github.com/rstudio/shiny_example
+https://github.com/wleepang/DesktopDeployR
+https://cyberhelp.sesync.org/quickstart/how-do-i-publish-a-shiny-app-on-the-sesync-server.html
+https://www.reddit.com/r/Rlanguage/comments/aljcf6/anyone_have_experience_with_deploying_shiny_apps/
+stand-alone deployment
+https://engineering-shiny.org/
+https://github.com/ficonsulting/RInno
+https://www.youtube.com/watch?v=ARrbbviGvjc
+https://chasemc.github.io/electricShine/
+
+console messages in real time:
+occorre interrompere il flusso della procedura altrimenti non ci si riesce.
+Una volta fatto questo il materiale è il seguente:
+https://stackoverflow.com/questions/30474538/possible-to-show-console-messages-written-with-message-in-a-shiny-ui
+https://gist.github.com/jcheng5/3830244757f8ca25d4b00ce389ea41b3
+https://rdrr.io/r/utils/capture.output.html
+https://adv-r.hadley.nz/conditions.html
+http://adv-r.had.co.nz/beyond-exception-handling.html
+http://adv-r.had.co.nz/Exceptions-Debugging.html
+di seguito per convertire tutti i try in tryCatch:
+https://stackoverflow.com/questions/12193779/how-to-write-trycatch-in-r
+
+icon:
+https://codetheweb.blog/html-icons/
+https://stackoverflow.com/questions/49498574/display-icon-in-the-title-bar-of-shiny-app-page
+https://shiny.rstudio.com/reference/shiny/0.14/icon.html
+https://stackoverflow.com/questions/43303389/r-shiny-publishing-leaflet-maps-with-custom-icons
+https://www.youtube.com/watch?v=yq4LfIOgT2A
+
+Input to asJSON(keep_vec_names=TRUE) is a named vector. 
+In a future version of jsonlite, this option will not be supported, and named vectors will be translated into arrays instead of objects. 
+If you want JSON object output, please use a named list instead. See ?toJSON
+
+putting multiple ggplots together, the (patchwork) package: https://patchwork.data-imaginist.com/articles/patchwork.html
+#??? http://htmlpreview.github.io/?https://github.com/KrishnaswamyLab/phateR/blob/master/inst/examples/bonemarrow_tutorial.html
+#??? http://cole-trapnell-lab.github.io/monocle-release/ 
+#??? https://stat.ethz.ch/R-manual/R-devel/library/base/html/Version.html 
+#??? http://htmlpreview.github.io/?https://github.com/KrishnaswamyLab/phateR/blob/master/inst/examples/bonemarrow_tutorial.html 
+https://github.com/jlmelville/smallvis
+Provare Mean-Shift Clustering (meanShiftR) o ancora DBSCAN (dbscan)  per clustering of tsne map
+see #https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68
+
+independent app:
+https://github.com/ficonsulting/RInno
+https://stackoverflow.com/questions/15884975/possible-to-run-rshiny-app-without-opening-an-r-environment
