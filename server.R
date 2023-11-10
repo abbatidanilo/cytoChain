@@ -32,10 +32,8 @@ server <- function(input, output, session) {
   temp_dir <<- tempdir()
   del_tmpdata(type = "all") #to delete all data from previous sessions
   
-  setwd(temp_dir) 
   old_file <- list.files(path = temp_dir)
   unlink(x = old_file, recursive = TRUE) #to delete all data in the temp dir as well
-  setwd(app_dir)
   
   withConsoleRedirect <- function(containerId, expr) {
     # Change type="output" to type="message" to catch stderr
@@ -403,21 +401,19 @@ server <- function(input, output, session) {
           paste("cfS", "zip", sep = ".")
         },
         content = function(file){
+          browser()
           del_tmpdata()
           file_path <- file
           tmpdir <- tempdir()
-          setwd(tempdir())
           fSlength <- length(dI.c())
           nr_sample <- 1:fSlength
           for (i in seq_along(nr_sample)) {
-            
             fFvectorName <- dI.c()[[i]]@description$FILENAME
-            write.FCS(dI.c()[[i]], filename = fFvectorName)
+            write.FCS(dI.c()[[i]], filename = paste0(tmpdir,"\\",fFvectorName))
           }
           
           Zip_Files <- list.files(path = getwd(), pattern = "^C_p")
           zip(zipfile = file_path, files = Zip_Files)
-          setwd(app_dir)
         },
         contentType = "application/zip")
     } 
@@ -568,16 +564,14 @@ server <- function(input, output, session) {
         del_tmpdata()
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
         fSlength <- length(dI.t())
         nr_sample <- 1:fSlength
         for (i in seq_along(nr_sample)){
           fFvectorName <- dI.t()[[i]]@description$FILENAME
-          write.FCS(dI.t()[[i]], filename = fFvectorName)}
+          write.FCS(dI.t()[[i]], filename = paste0(tmpdir,"\\",fFvectorName))}
         
         Zip_Files <- list.files(path = getwd(), pattern = "^T_")
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
       },
       contentType = "application/zip")
     
@@ -590,14 +584,12 @@ server <- function(input, output, session) {
         
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
         fSlength <- length(dI.t())
         nr_sample <- 1:fSlength
         for (i in seq_along(nr_sample)){
-          write.FCS(fS.complete[[i]], filename = fFvectorName_comp[[i]])}
+          write.FCS(fS.complete[[i]], filename = paste0(tmpdir,"\\", fFvectorName_comp[[i]]))}
         Zip_Files <- list.files(path = getwd(), pattern = "^complete_")
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
       },
       contentType = "application/zip")
   })
@@ -764,16 +756,14 @@ server <- function(input, output, session) {
         
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
         fSlength <- length(dI.a())
         nr_sample <- 1:fSlength
         for (i in seq_along(nr_sample)) {
           fFvectorName <- dI.a()[[i]]@description$FILENAME
-          write.FCS(dI.a()[[i]], filename = fFvectorName)}
+          write.FCS(dI.a()[[i]], filename = paste0(tmpdir,"\\",fFvectorName))}
     
         Zip_Files <- list.files(path = getwd(), pattern = "^A_")  
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
       },
       contentType = "application/zip")
     
@@ -786,14 +776,12 @@ server <- function(input, output, session) {
         
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
         fSlength <- length(dI.a())
         nr_sample <- 1:fSlength
         for (i in seq_along(nr_sample)){
-          write.FCS(fS.complete[[i]], filename = fFvectorName_comp[[i]])}
+          write.FCS(fS.complete[[i]], filename = paste0(tmpdir,"\\", fFvectorName_comp[[i]]))}
         Zip_Files <- list.files(path = getwd(), pattern = "^complete_")
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
       },
       contentType = "application/zip")
   })
@@ -1085,16 +1073,14 @@ server <- function(input, output, session) {
         
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
         fSlength <- length(dI.H())
         nr_sample <- 1:fSlength
         for (i in seq_along(nr_sample)){
           fFvectorName <- dI.H()[[i]]@description$FILENAME
-          write.FCS(dI.H()[[i]], filename = fFvectorName)}
+          write.FCS(dI.H()[[i]], filename = paste0(tmpdir,"\\",fFvectorName))}
         
         Zip_Files <- list.files(path = getwd(), pattern = "^D_*") 
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
       },
       contentType = "application/zip")
     
@@ -1107,14 +1093,12 @@ server <- function(input, output, session) {
         
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
         fSlength <- length(dI.H())
         nr_sample <- 1:fSlength
         for (i in seq_along(nr_sample)){
-          write.FCS(fS.complete[[i]], filename = fFvectorName_comp[[i]])}
+          write.FCS(fS.complete[[i]], filename = paste0(tmpdir,"\\",fFvectorName_comp[[i]]))}
         Zip_Files <- list.files(path = getwd(), pattern = "^complete_")
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
       },
       contentType = "application/zip")
     })
@@ -1192,11 +1176,9 @@ server <- function(input, output, session) {
           del_tmpdata()
           file_path <- file
           tmpdir <- tempdir()
-          setwd(tempdir())
-          write.FCS(dI.co(), filename = "conc_fF.fcs")
+          write.FCS(dI.co(), filename = paste0(tmpdir,"\\","conc_fF.fcs"))
           Zip_Files <- list.files(path = getwd(), pattern = "^conc_fF*")
           zip(zipfile = file_path, files = Zip_Files)
-          setwd(app_dir)
         },
         contentType = "application/zip")
     }else{
@@ -2240,16 +2222,13 @@ server <- function(input, output, session) {
           paste("kTsne", "zip", sep = ".")
         },
         content = function(file){
-          
           file_path <- file
           tmpdir <- tempdir()
-          setwd(tempdir())
-          write.FCS(dI.tSNE.K$fF_final, filename = "kTsne.fcs")
-          Zip_Files <- list.files(path = getwd(), pattern = "^kTsne*")
+          write.FCS(dI.tSNE.K$fF_final, filename = paste0(tmpdir,"\\","kTsne.fcs"))
+          Zip_Files <- list.files(path = tmpdir, pattern = "^kTsne*")
           #Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) 
           #this is necessary to sort in the correct way the flowFrames in the flowSet
           zip(zipfile = file_path, files = Zip_Files)
-          setwd(app_dir)
         },
         contentType = "application/zip")  
   })
@@ -2337,12 +2316,11 @@ server <- function(input, output, session) {
         
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
-        write.FCS(dI.tSNE_unique.K$fF_final, filename = "kTsne.fcs")
-        Zip_Files <- list.files(path = getwd(), pattern = "^kTsne*")
+        write.FCS(dI.tSNE_unique.K$fF_final, filename = paste0(tmpdir,"\\","kTsne.fcs"))
+        Zip_Files <- list.files(path = tmpdir, pattern = "^kTsne*")
         #Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) #this is necessary to sort in the correct way the flowFrames in the flowSet
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
+  
       },
       contentType = "application/zip")  
   })
@@ -2608,12 +2586,12 @@ server <- function(input, output, session) {
       content = function(file){
         file_path <- file
         tmpdir <- tempdir()
-        setwd(tempdir())
-        write.FCS(dI.clust_save$fFclust, filename = "cluster.fcs")
-        Zip_Files <- list.files(path = getwd(), pattern = "^cluster*")
+        
+        write.FCS(dI.clust_save$fFclust, filename = paste0(tmpdir,"\\","cluster.fcs"))
+        Zip_Files <- list.files(path = tmpdir, pattern = "^cluster*")
         Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE)
         zip(zipfile = file_path, files = Zip_Files)
-        setwd(app_dir)
+        
       },
       contentType = "application/zip")
   })
@@ -3083,12 +3061,12 @@ server <- function(input, output, session) {
           
           file_path <- file
           tmpdir <- tempdir()
-          setwd(tempdir())
-          write.FCS(dI.metaclust_save$fFclust, filename = "meta_cluster.fcs")
-          Zip_Files <- list.files(path = getwd(), pattern = "^meta_cluster*")
+          
+          write.FCS(dI.metaclust_save$fFclust, filename = paste0(tmpdir,"\\","meta_cluster.fcs"))
+          Zip_Files <- list.files(path = tmpdir, pattern = "^meta_cluster*")
           Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) 
           zip(zipfile = file_path, files = Zip_Files)
-          setwd(app_dir)
+          
         },
         contentType = "application/zip")  
     }
@@ -3377,13 +3355,13 @@ server <- function(input, output, session) {
           
           file_path <- file
           tmpdir <- tempdir()
-          setwd(tempdir())
-          write.FCS(dI.map_save$fFmap, filename = "map_cluster.fcs")
-          write.csv(x =  exprs(dI.map_save$fFmap), file = "map_cluster.csv")
-          Zip_Files <- list.files(path = getwd(), pattern = "^map_cluster*")
+          
+          write.FCS(dI.map_save$fFmap, filename = paste0(tmpdir,"\\","map_cluster.fcs"))
+          write.csv(x =  exprs(dI.map_save$fFmap), file = paste0(tmpdir,"\\","map_cluster.csv"))
+          Zip_Files <- list.files(path = tmpdir, pattern = "^map_cluster*")
           Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) 
           zip(zipfile = file_path, files = Zip_Files)
-          setwd(app_dir)
+          
         },
         contentType = "application/zip")}
     
@@ -4241,16 +4219,15 @@ server <- function(input, output, session) {
           
           file_path <- file
           tmpdir <- tempdir()
-          setwd(tempdir())
+          
           fSlength <- length(dI.PE())
           for (i in seq_along(1:fSlength)) {
             fFvectorName[[i]] <- paste0("new_", dI.PE_val$fF_names[[i]])
-            write.FCS(dI.PE()[[i]], filename = fFvectorName[[i]])}
+            write.FCS(dI.PE()[[i]], filename = paste0(tmpdir,"\\",fFvectorName[[i]]))}
           
           Zip_Files <- list.files(path = getwd(), pattern = "^new*")
           #Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) 
           zip(zipfile = file_path, files = Zip_Files)
-          setwd(app_dir)
         },
         contentType = "application/zip")  
     })
@@ -5056,11 +5033,10 @@ server <- function(input, output, session) {
             
             del_tmpdata()
             file_path <- file
-            setwd(data_dir)
-          
+            #setwd(data_dir)
             Zip_Files <- list.files(path = data_dir, pattern = "*.*")
             zip(zipfile = file_path, files = Zip_Files)
-            setwd(app_dir)
+            #setwd(app_dir)
             },
           contentType = "application/zip")
       })# end observeEent
