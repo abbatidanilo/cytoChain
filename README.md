@@ -1,7 +1,7 @@
 # cytoChain
-This is a first prototype of cytoChain, a Shiny web app to handle high-dimensional cytometry datasets. A beta release is currently deployed at the shinyapps.io servers and it is available at the following [link](//abbatidanilo.shinyapps.io/cytoChain)
+This is a first prototype of cytoChain, a Shiny web app to handle high-dimensional cytometry datasets. A beta release is currently deployed at the `shinyapps.io` server and it is available at the following [link](//abbatidanilo.shinyapps.io/cytoChain)
 
-In case you are interested in cytoChain for your cytometric analisys drop a mail with a description of your goals, experiments and aims to abbati.danilo@hsr.it. 
+In case you are interested in cytoChain for your cytometric analisys, drop a mail with a description of your goals, experiments and aims to abbati.danilo@hsr.it. 
 
 cytoChain has been deployed by Danilo Abbati at the Experimental Hematology department of the San Raffaele Hospital - Milan (Italy). 
 
@@ -9,7 +9,7 @@ cytoChain has been deployed by Danilo Abbati at the Experimental Hematology depa
 Install this package using the devtools library.
 
 ```
-devtools::install_github("[abbatidanilo/cytoChain]")
+devtools::install_github("abbatidanilo/cytoChain")
 ```
 
 ## Operation 
