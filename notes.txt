@@ -1,5 +1,7 @@
 cytoChain4.26
 
+check sui meta_data prima tabella: tim/step checking with no feedback or any control
+implementare t-student per cluster
 cluster_signature implementation (from cytoAdvance4.12) 
 Verify validate() mechanism into the meta_sample table 
 video tutorial https://youtu.be/0KMfPESrNSc
@@ -104,3 +106,9 @@ see #https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-
 independent app:
 https://github.com/ficonsulting/RInno
 https://stackoverflow.com/questions/15884975/possible-to-run-rshiny-app-without-opening-an-r-environment
+
+other apps:
+CytoPipeline & CytoPipelineGUI: https://www.biorxiv.org/content/10.1101/2023.10.10.561699v1
+https://dillonhammill.github.io/CytoExploreR/
+https://crusty.humanitas.it/execute/Example2
+
