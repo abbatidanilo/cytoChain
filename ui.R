@@ -1774,7 +1774,7 @@ sidebar_panel_clust <- sidebarPanel(width = 3,
                                     
                                     tags$hr(style="border-color: green;"),
                                     h4("Clustering parameters"),
-                                    sliderInput(inputId = "k", label = paste0("select the number of clusters for K_means algorithm", 
+                                    sliderInput(inputId = "k", label = paste0("select the number of clusters for K_means algorithm ", 
                                                                               "or the number of number of nearest neighbours for Phenograph"), 
                                                 min = 2, max = 200, value = 30, ticks = TRUE, dragRange = FALSE),
                                     bsPopover(id = "k", title = "cluster quantity", 

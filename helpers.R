@@ -2608,7 +2608,7 @@ flowSOM_clust <- function(flow_Set, selected_markers, seed) {
   pDname_subset <- c(unname(res.expr[[2]]))
   
   set.seed(seed)
-  
+
   options(warn = 2) # Turn warnings into errors so they can be trapped
   result <- try(expr = ReadInput(flow_Set, transform = FALSE, scale = F))
   if (inherits(x = result,"FlowSOM")){
