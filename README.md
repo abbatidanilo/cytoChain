@@ -6,7 +6,7 @@ In case you are interested in cytoChain for your cytometric analisys, drop a mai
 cytoChain has been deployed by Danilo Abbati at the Experimental Hematology department of the San Raffaele Hospital - Milan (Italy). 
 
 ## Get the package and run the application
-You should install **shiny** library
+You should install **shiny** and all the other libraries listed below in the sessionInfo() section and then run:
 
 ```
 shiny::runGitHub("abbatidanilo/cytoChain", username = abbatidanilo, ref = "master", subdir = NULL, port = NULL, launch.browser = getOption("shiny.launch.browser", interactive()))
