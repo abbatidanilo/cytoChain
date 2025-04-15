@@ -3,7 +3,7 @@
 #https://abbatidanilo.shinyapps.io/cytoChain/
 
 RENDER_DATA <- 35000 #with 50000 the plotting of the labelled map is very slow
-MIN_SAMPLE_LENGTH <- 50 #with a sample with less than MIN_SAMPLE_LENGTH the downsampling cannot be performed
+MIN_SAMPLE_LENGTH <- 30 #with a sample with less than MIN_SAMPLE_LENGTH the downsampling cannot be performed
 MIN_SAMPLE_LENGTH_AFTER_DOWNSAMPLING <- 20 
 MAX_EVA <- 20000
 
@@ -177,10 +177,18 @@ loading_fS <- function(inputfile, tipo) {
 
     options(warn = 1) # Turn warnings into errors so they can be trapped
     fSresult <- try(expr = read.flowSet(files = inputfile, truncate_max_range = FALSE), silent = FALSE)
+    ## ----------------------------------------------------------------------------------- ##
+    # To compare two different samples in case of an error (typically because they have different numbers of channels: #
+    # FCS1 <- read.FCS(filename = "..\\..\\sample_name.fcs", truncate_max_range = FALSE)
+    # FCS2 <- read.FCS(filename = "..\\..\\sample_name.fcs", truncate_max_range = FALSE)
+    # data1 <- FCS1@parameters@data
+    # data2 <- FCS2@parameters@data
+    # ... and check the names
+    ##
     fcs_files_name <- basename(inputfile)
     if (inherits(x = fSresult,"flowSet")){ 
       options(warn = 0)
-      
+    
       for (i in 1:length(fSresult)){
         dim <- dim(exprs(fSresult[[i]]))[1]
         if (dim == 0){
@@ -213,7 +221,7 @@ loading_fS <- function(inputfile, tipo) {
           quale2 <- which(fF_dim %in% as.numeric(livelli[2]))
           msg <- paste0("Some samples have ",livelli[1]," dimensions (aka markers), but sample nr.",as.character(quale2[1]), 
                         " has only ",livelli[2], " dimensions. 
-                        Some samples have only ",livelli[2]," dimensions, but sample nr.",as.character(quale1[1]), 
+                        Some samples have ",livelli[2]," dimensions, but sample nr.",as.character(quale1[1]), 
                         " has ",livelli[1], " dimensions. Please check if the samples belong to the same experiment")}
       else { msg <- paste0("Samples nr. ",as.character(i)," has some problems. System reports: <<", fFresult, ">>. 
                            Try to remove the sample from the flowSet")}}
@@ -2159,14 +2167,48 @@ edit_table <- function(flow_Set = NULL, file_name = NULL) {
             vectorTag2[i] = paste("type_", as.character(i), sep = "")}}}
     
       if (i<27) {vectorTag3[i] = LETTERS[i]}
-      if ((i>26)&&(i<54)) {vectorTag3[i] = letters[i-26]}
-      if ((i>52)&&(i<80)) {vectorTag3[i] = LETTERS[i-52]}
-      if ((i>78)&&(i<106)) {vectorTag3[i] = letters[i-78]}
-      if ((i>104)&&(i<132)) {vectorTag3[i] = LETTERS[i-104]}
-      if ((i>130)&&(i<168)) {vectorTag3[i] = letters[i-130]}
+      if ((i>=27)&&(i<53)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[i-26])}
+      if ((i>=53)&&(i<79)) {vectorTag3[i] = paste0(LETTERS[2],LETTERS[i-52])}
+      if ((i>=79)&&(i<105)) {vectorTag3[i] = paste0(LETTERS[3],LETTERS[i-78])}
+      if ((i>=105)&&(i<131)) {vectorTag3[i] = paste0(LETTERS[4],LETTERS[i-104])}
+      if ((i>=131)&&(i<157)) {vectorTag3[i] = paste0(LETTERS[5],LETTERS[i-130])}
+      if ((i>=157)&&(i<183)) {vectorTag3[i] = paste0(LETTERS[6],LETTERS[i-156])}
+      if ((i>=193)&&(i<209)) {vectorTag3[i] = paste0(LETTERS[7],LETTERS[i-182])}
+      if ((i>=209)&&(i<235)) {vectorTag3[i] = paste0(LETTERS[8],LETTERS[i-208])}
+      if ((i>=235)&&(i<261)) {vectorTag3[i] = paste0(LETTERS[9],LETTERS[i-234])}
+      if ((i>=261)&&(i<287)) {vectorTag3[i] = paste0(LETTERS[10],LETTERS[i-260])}
+      if ((i>=287)&&(i<313)) {vectorTag3[i] = paste0(LETTERS[11],LETTERS[i-286])}
+      if ((i>=313)&&(i<339)) {vectorTag3[i] = paste0(LETTERS[12],LETTERS[i-312])}
+      if ((i>=339)&&(i<365)) {vectorTag3[i] = paste0(LETTERS[13],LETTERS[i-338])}
+      if ((i>=365)&&(i<391)) {vectorTag3[i] = paste0(LETTERS[14],LETTERS[i-364])}
+      if ((i>=391)&&(i<417)) {vectorTag3[i] = paste0(LETTERS[15],LETTERS[i-390])}
+      if ((i>=417)&&(i<443)) {vectorTag3[i] = paste0(LETTERS[16],LETTERS[i-416])}
+      if ((i>=443)&&(i<469)) {vectorTag3[i] = paste0(LETTERS[17],LETTERS[i-442])}
+      if ((i>=469)&&(i<495)) {vectorTag3[i] = paste0(LETTERS[18],LETTERS[i-468])}
+      if ((i>=495)&&(i<521)) {vectorTag3[i] = paste0(LETTERS[19],LETTERS[i-494])}
+      if ((i>=521)&&(i<547)) {vectorTag3[i] = paste0(LETTERS[20],LETTERS[i-520])}
+      if ((i>=547)&&(i<573)) {vectorTag3[i] = paste0(LETTERS[21],LETTERS[i-546])}
+      if ((i>=573)&&(i<599)) {vectorTag3[i] = paste0(LETTERS[22],LETTERS[i-572])}
+      if ((i>=599)&&(i<625)) {vectorTag3[i] = paste0(LETTERS[23],LETTERS[i-598])}
+      if ((i>=625)&&(i<651)) {vectorTag3[i] = paste0(LETTERS[24],LETTERS[i-624])}
+      if ((i>=651)&&(i<677)) {vectorTag3[i] = paste0(LETTERS[25],LETTERS[i-650])}
+      if ((i>=677)&&(i<703)) {vectorTag3[i] = paste0(LETTERS[26],LETTERS[i-676])}
+      if ((i>=703)&&(i<729)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[1],LETTERS[i-702])}
+      if ((i>=729)&&(i<755)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[2],LETTERS[i-728])}
+      if ((i>=755)&&(i<781)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[3],LETTERS[i-754])}
+      if ((i>=781)&&(i<807)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[4],LETTERS[i-780])}
+      if ((i>=807)&&(i<833)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[5],LETTERS[i-806])}
+      if ((i>=833)&&(i<859)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[6],LETTERS[i-832])}
+      if ((i>=859)&&(i<885)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[7],LETTERS[i-858])}
+      if ((i>=885)&&(i<911)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[8],LETTERS[i-884])}
+      if ((i>=911)&&(i<937)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[9],LETTERS[i-910])}
+      if ((i>=937)&&(i<963)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[10],LETTERS[i-936])}
+      if ((i>=963)&&(i<989)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[11],LETTERS[i-969])}
+      if ((i>=989)&&(i<1015)) {vectorTag3[i] = paste0(LETTERS[1],LETTERS[12],LETTERS[i-988])}
       
       if (i < 11) {vectorTag4[i] <- paste0("time_0", as.character(i-1))}
-      else {vectorTag4[i] <- paste0("time_", as.character(i-1))}
+      if ((i >=11)&&(i < 101)) {vectorTag4[i] <- paste0("time_", as.character(i-1))}
+      if ((i >=101)&&(i < 1000)) {vectorTag4[i] <- paste0("time", as.character(i-1))}
   
       metadf <- data.frame("file_name" = vectorFile, 
                        "sample_id" = vectorSampleid, 
@@ -2916,10 +2958,10 @@ cluster_eva <- function(fF ,clustering, color, distance, power=NULL, setseed, ty
   
 
 plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selected_markers, cluster_labelling = NULL, 
-                                            pheno_table = NULL, Nclust, central, min_quantile, max_quantile, 
+                                            pheno_table = NULL, Nclust, central, min_quantile, max_quantile, quant,
                                             pos_threshold, neg_threshold, dist_method, hclust_method, color_clusters, 
                                             color_label = NULL, work = NULL, cluster.signature = NULL) {
-  
+
   res.expr <- exprs_sub(flow.Set = flow_Set, selected.markers = selected_markers)
   exprsub <- res.expr[[1]]
   pDname_subset <- res.expr[[2]]
@@ -2933,11 +2975,18 @@ plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selec
     pDdesc_subset <- pDdesc_subset[-posizione]}
   
   colnames(exprsub) <- pDdesc_subset
-  rng <- colQuantiles(x = exprsub, probs = c(min_quantile, max_quantile), drop = TRUE) #[nr of markers x min_quantile [,1] , max quitile [,2]]
-  expr01 <- t((t(exprsub) - rng[, 1]) / (rng[, 2] - rng[, 1]))
-  expr01_median <- data.frame(expr01, cell_clustering = clustering)
-  expr01[expr01 < 0] <- 0 #[number of events]
-  expr01[expr01 > 1] <- 1 #[number of events]
+  #browser()
+  normalize.function <- function(x, quantiles=quant) { #used to normalize from 0 to 1 the expression range
+    if (!quant){
+      rng <- colQuantiles(x = exprsub, probs = c(min_quantile, max_quantile), drop = TRUE) #[nr of markers x min_quantile [,1] , max quitile [,2]]
+      expr01 <- t((t(exprsub) - rng[, 1]) / (rng[, 2] - rng[, 1]))
+    }else{
+      expr01 <- (x - min(x)) / (max(x) - min(x))}
+    expr01[expr01 < 0] <- 0
+    expr01[expr01 > 1] <- 1
+    return (expr01)}
+  
+  expr01 <- normalize.function(exprsub, quant)
   
   # Calculate the central tendency expression
   if ((central == "median")||(central == "mean")){
@@ -2954,12 +3003,16 @@ plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selec
       group_by(cell_clustering) %>% 
       summarize_all(.funs = my_mode)} #[number of cluster, ]
   
-  if (!is.null(cluster.signature)) {
-    expr01_median <- as_tibble(cluster.signature)} 
-  #in case input$signature_finding_method=="Densities"
-  
       # Calculate cluster frequencies
   clustering_table <- as.numeric(table(clustering)) #[nr of cluster]
+  
+  cell_clustering <- expr01_median$cell_clustering
+  expr01_median$cell_clustering <- NULL #before to calculate the distance with dist let' remove the cell_clustering column
+  
+#  if (!is.null(cluster.signature)) {
+#    expr01_median <- as_tibble(cluster.signature)} 
+  #in case input$signature_finding_method=="Densities" - Please notice than in this case the heatmap computation is not based to the central 
+  # (typically the "median") values but on the peaks
   
   # This clustering is based on the markers that were used for the main clustering
   d <- dist(expr01_median, method = dist_method) #[(n * (n-1))/ 2] where n is the number of clusters
@@ -2969,7 +3022,8 @@ plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selec
   if (inherits(x = hclust_result,"hclust")){
     options(warn = 0)
     expr_heat <- as.matrix(expr01_median[, c(colnames(expr01))])
-    rownames(expr_heat) <- expr01_median$cell_clustering #[nr of cluster x markers]
+    rownames(expr_heat) <- cell_clustering #[nr of cluster x markers]
+    expr01_median$cell_clustering <- cell_clustering
    
     # Row annotation for the heatmap
     annotation_row <- data.frame(cluster = expr01_median$cell_clustering, stringsAsFactors = FALSE) # a factor [nr clusters x 1]
@@ -3157,7 +3211,7 @@ plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selec
     if(type_HM=="full_label")
     {pheatmap(mat = expr_heat, color = color, cluster_cols = FALSE, cluster_rows = hclust_result, 
               labels_col = labels_col, labels_row = labels_row, display_numbers = TRUE, number_color = "black", 
-              fontsize = 11, fontsize_number = 9,
+              fontsize = 11, fontsize_number = 9, treeheight_col = 150, treeheight_row = 150,
               annotation_row = NULL, annotation_colors = NULL, 
               annotation_legend = annotation_legend)
       dev.off()}
@@ -3165,7 +3219,7 @@ plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selec
     if(type_HM=="full_label_plus")
     {pheatmap(mat = temp_expr_heat, color = color, cluster_cols = FALSE, cluster_rows = hclust_result, 
               labels_col = labels_col, labels_row = labels_row, display_numbers = TRUE, number_color = "black", 
-              fontsize = 11, fontsize_number = 9,
+              fontsize = 11, fontsize_number = 9, treeheight_col = 150, treeheight_row = 150,
               annotation_row = temp_annotation_row, annotation_colors = annotation_colors, 
               annotation_legend = annotation_legend)
       dev.off()}
@@ -3173,7 +3227,7 @@ plot_clustering_heatmap_wrapper <- function(flow_Set, type_HM, clustering, selec
     if(type_HM=="label"||type_HM=="meta"||type_HM=="pheno")
     {pheatmap(mat = temp_expr_heat, color = color, cluster_cols = FALSE, cluster_rows = hclust_result, 
               labels_col = labels_col, labels_row = labels_row, display_numbers = TRUE, number_color = "black", 
-              fontsize = 12, fontsize_number = 8,
+              fontsize = 12, fontsize_number = 8, treeheight_col = 150, treeheight_row = 150,
               annotation_row = temp_annotation_row, annotation_colors = annotation_colors, 
               annotation_legend = annotation_legend)
       dev.off()}
@@ -3464,7 +3518,7 @@ map_plot_comp <- function(map_df, type = NULL, two_three = NULL, map_inds=NULL, 
 
 
 phenocluster <- function(flow_Set, selected_markers, clustering, phenoquery, central, min_quantile, 
-                         max_quantile, pos_threshold, neg_threshold, cluster.signature = NULL){
+                         max_quantile, quant, pos_threshold, neg_threshold, cluster.signature = NULL){
   
   res.expr <- exprs_sub(flow.Set = flow_Set, selected.markers = selected_markers)
   exprsub <- res.expr[[1]]
@@ -3513,12 +3567,17 @@ phenocluster <- function(flow_Set, selected_markers, clustering, phenoquery, cen
   # the cluster 81 contains (is mapped) as a Naive cells (that is the 8th phenotype entered)
   # 
   
-  rng <- colQuantiles(x = exprsub, probs = c(min_quantile, max_quantile), drop = TRUE) 
-  #[nr of markers x min_quantile [,1] , max quitile [,2]]
-  expr01 <- t((t(exprsub) - rng[, 1]) / (rng[, 2] - rng[, 1]))
+  normalize.function <- function(x, quantiles=quant) { #used to normalize from 0 to 1 the expression range
+    
+    if (!quant){
+      rng <- colQuantiles(x = exprsub, probs = c(min_quantile, max_quantile), drop = TRUE) #[nr of markers x min_quantile [,1] , max quitile [,2]]
+      expr01 <- t((t(exprsub) - rng[, 1]) / (rng[, 2] - rng[, 1]))
+    }else{ expr01 <- (x - min(x)) / (max(x) - min(x))}
+    expr01[expr01 < 0] <- 0
+    expr01[expr01 > 1] <- 1
+    return (expr01)}
   
-  expr01[expr01 < 0] <- 0
-  expr01[expr01 > 1] <- 1
+  expr01 <- normalize.function(x = exprsub, quantiles = quant)
   
   # Calculate the central tendency expression
   if ((central == "median")||(central == "mean")){
@@ -3624,7 +3683,7 @@ phenocluster <- function(flow_Set, selected_markers, clustering, phenoquery, cen
 
 
 cluster_signature <- function(fS, selected.marker, clustId, color_marker, tipo = NULL, central, min_quantile, 
-                              max_quantile, pos_threshold, neg_threshold){
+                              max_quantile, quant, pos_threshold, neg_threshold){
 # The function is split in two: 
 # - the first is to produce the density function for each single marker and to find the minimum of the sum of densities for each color 
 # for each cluster. This minimum on the x position (normalized) provides the MFI reference for each single cluster to be used in place of the 0.5 (50%)
@@ -3673,13 +3732,15 @@ finite.differences <- function(x, y) {
   fdx[1] <- 0
   return(fdx)}
 
-#normalize.function <- function(x) {return ((x - min(x)) / (max(x) - min(x)))} #used to normalize from 0 to 1 the expression range
-
-normalize.function <- function(x) { 
-  expr03 <- (x - min(x)) / (max(x) - min(x))
-  expr03[expr03 < 0] <- 0
-  expr03[expr03 > 1] <- 1
-  return (expr03)}
+normalize.function <- function(x, quantiles=quant) { #used to normalize from 0 to 1 the expression range
+  
+  if (!quant){
+    rng <- colQuantiles(x = exprsub, probs = c(min_quantile, max_quantile), drop = TRUE) #[nr of markers x min_quantile [,1] , max quitile [,2]]
+    expr01 <- t((t(exprsub) - rng[, 1]) / (rng[, 2] - rng[, 1]))
+  }else{ expr01 <- (x - min(x)) / (max(x) - min(x))}
+  expr01[expr01 < 0] <- 0
+  expr01[expr01 > 1] <- 1
+  return (expr01)}
 
 studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, ilmarker, central) {
   # Starting from the left to find the change in sign of df_dx. The massimo.minimo() function seeks the point of maximum of the
@@ -3739,7 +3800,7 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
   k <- 0
   skip <- TRUE
   spacing <- floor(peak_space*x_granularity) - 1 #these are the points which has to separates two distinguished events (min or max or changes in the derivative sign)
-  #browser()
+  
   check_rle<-rle(abs(derivate)<min_derive)
   check_rle_rev <- rle(abs(rev(derivate))<min_derive)
   k_max <- x_granularity - check_rle_rev$lengths[1]
@@ -3752,9 +3813,10 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
     kx <-  rle_points[[1]][[ix]] + kx
     relevant_points[ix] <- kx
     ix <- ix + 1}
-  
+  #rbowser()
+  relevant_points_reference <- rbind(relevant_points, round(relevant_points/x_granularity, 3)) #this is to help in the debugging
   for (i in left_border:right_border){ #to find the min/max points
-    #if((i==505)||(i==758)||(i==782)||(i==902)||(i==1042)||(i==1252)||(i==1340))#{browser()}  
+    #if((i==382)||(i==455)||(i==460)||(i==758)||(i==854)||(i==1066)||(i==1129)||(i==1222)||(i==1228)||(i==1252)){rbowser()}  
     #the range is limited in the left and in the right of the two guards
     if ((k <= check_rle$lengths[1])&&(i<right_border)&&(skip)){k <- k+1; if (k==check_rle$lengths[1]){skip<-FALSE}; next} #to skip the lowest derivate's 
     #value typically at the beginning or the end of the normalized derivate vector. It should be done only once (skip)
@@ -3765,9 +3827,9 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
     found_something <- FALSE #in case the algorithm found something along the way in the next loop
     if ((i < (right_border - floor(spacing)))&&((derivate[i]*derivate[i+1]< 0)&&(!max1_found))) { #if the derivative changes the sign and it is the first max found
       if (dens_func[i-1] < dens_func[i]) { #case of maximum
-        #if ((ilcluster==1)&&(ilmarker==3)){browser()}
+        #if ((ilcluster==1)&&(ilmarker==3)){rbowser()}
         ####################################### this is just for debugging 
-        #browser()#
+        #rbowser()#
         #the max1 is a maximum candidate: we should verify if:
         if ((dens_func[i] > (dens_bkg + min_dens))&&(var(sign(derivate[(i+1):(i+floor(spacing))]))==0)){ 
           # the max must be above the background
@@ -3782,9 +3844,9 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
     if ((i < (right_border - floor(spacing)))&&((derivate[i]*derivate[i+1]< 0)&&(i > x_max1)&&(!max2_found))) { 
       #if the derivative changes the sign for the second time
       if (dens_func[i-1] > dens_func[i]){ #case of minimum - after a maximum there is always a minimum. 
-        #if ((ilcluster==1)&&(ilmarker==3)){browser()}
+        #if ((ilcluster==1)&&(ilmarker==3)){rbowser()}
         ####################################### this is just for debugging 
-        #browser()#
+        #rbowser()#
         if ((abs(max1 - peak_gorge) > dens_func[i])&&(var(sign(derivate[(i+1):(i+floor(spacing*2/3))]))==0)){ 
           #This is to avoid a second max too much close to the min (e.g. the case you have a saw tooth derivative)
           # 2) case of minimum enough different from the density peak (otherwise skip the minimum) && to avoid saw tooth in the derivative
@@ -3794,12 +3856,12 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
           found_something <- TRUE
           k <- 0}}
       if (dens_func[i] > dens_func[i-1]){ #case of maximum: let's see if it is a max2 candidate  
-        #browser()#
+        #rbowser()#
         if (((abs(i - x_max1) > spacing) > 0)&&(min_found)&&(var(sign(derivate[(i+1):(i+floor(spacing/3))]))==0)) { 
           #3) to verify the if the second maximum is far enough from the first one (peak_space should be in %, it's inside the spacing var) 
           # also to verify if there has been a minimum before (if not, it means that the two possible peaks are not enough different)
-          #browser()#
-          #if ((ilcluster==1)&&(ilmarker==3)){browser()}
+          #rbowser()#
+          #if ((ilcluster==1)&&(ilmarker==3)){rbowser()}
           ####################################### this is just for debugging 
           if (dens_func[i] > dens_bkg + min_dens){ 
             # 4) to verify if the second peak stands out from the background and if ti is enough different from the other peak
@@ -3811,11 +3873,12 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
             if (!max1_found) { # in case the second peak is found, but the first one is still missing (they swap)
               max1_found <- TRUE; max1 <- dens_func[i]; x_max1 <- i
               max2_found <- FALSE; max2 <- 0; x_max2 <- 0}} 
-        }}}} # end of for cycle
+        }}}
+    } # end of for cycle
   ############# two cycles: one for the maxs and one for the mins
   k <- 0; skip <- TRUE; min1 <- 0; x_min1 <- 0; min1_found <- FALSE; min2 <- 0; x_min2 <- 0; min2_found <- FALSE
   for (i in left_border:right_border){ #to find the min points (starting and ending before the limits)
-    #if((i==505)||(i==758)||(i==782)||(i==782)||(i==902)||(i==1042)||(i==1252)||(i==1340)) #{browser()}
+    #if((i==505)||(i==758)||(i==782)||(i==782)||(i==902)||(i==1042)||(i==1252)||(i==1340)) #{rbowser()}
     if ((k <= check_rle$lengths[1])&&(i<right_border)&&(skip)){k <- k+1; if (k==check_rle$lengths[1]){skip<-FALSE}; next} #to skip the lowest 
     #derivate's value typically at the beginning or the end of the normalized derivate vector. It should be done only once (skip)
     if ((i > k_max)&&(i < right_border)){next} #to skip the latest derivate values which are less than min_derive
@@ -3823,8 +3886,8 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
     found_something <- FALSE
     if ((i < (right_border - floor(spacing)))&&((derivate[i]*derivate[i+1]< 0)&&(!min1_found)&&(i > x_max1))) { #if the derivative changes the sign and it is the first min found
       if (dens_func[i-1] > dens_func[i]) { #case of minimum
-        #browser()#
-        #if ((ilcluster==1)&&(ilmarker==3)){browser()}
+        #rbowser()#
+        #if ((ilcluster==1)&&(ilmarker==3)){rbowser()}
         ####################################### this is just for debugging 
         if ((abs(max1 - peak_gorge) > dens_func[i])&&
             (abs(x_min1 - i) > spacing)&&(abs(x_min2 - i) > spacing)&&(abs(x_max1 - i) > spacing)&&(var(sign(derivate[(i+1):(i+floor(spacing/2))]))==0)){
@@ -3838,8 +3901,8 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
           k <- 0}}}  
     if ((i < (right_border - floor(spacing)))&&(derivate[i]*derivate[i+1]< 0)&&(i > x_max1)&&(i < x_max2)) { #if the derivative changes the sign for the second time
       if (dens_func[i-1] > dens_func[i]) {#case of minimum
-        #browser()#
-        #if ((ilcluster==1)&&(ilmarker==3)){browser()}
+        #rbowser()#
+        #if ((ilcluster==1)&&(ilmarker==3)){rbowser()}
         ####################################### this is just for debugging 
         if ((dens_func[i]>dens_bkg)&&(abs(x_min1 - i) < spacing)&&(abs(x_min2 - i) < spacing)&&(abs(x_max1 - i) < spacing)&&(abs(x_max2 - i) < spacing)&&
             (var(sign(derivate[(i+1):(i+floor(spacing/2))]))==0)){
@@ -3849,7 +3912,7 @@ studio_di_funzione <- function(x_granularity, dens_func, derivate, ilcluster, il
           found_something <- TRUE
           k <- 0}}}}# end for cycle
   
-  #if ((ilcluster==1)&&(ilmarker==3)){browser()}
+  #if ((ilcluster==1)&&(ilmarker==3)){rbowser()}
   ####################################### this is just for debugging 
     
 if((min1_found)||(min2_found)){min_found <- TRUE}
@@ -3886,6 +3949,7 @@ ld_list_MFI <- vector(mode = "list", length = length(color_marker))
 ld_list <- vector(mode = "list", length = length(color_marker)) 
 #This is the list of the ggplot layers reporting the marker density for the selected cluster
 expr01_peak <- data.frame(matrix(ncol = length(marker_name), nrow = n_clust)) 
+expr01_no_delta <- data.frame(matrix(ncol = length(marker_name), nrow = n_clust)) 
 expr_log <- data.frame(matrix(ncol = length(marker_name), nrow = n_clust)) 
 warning_msg_1 <- ""; warning_msg_2 <- ""; warning_msg_3 <- ""; warning_msg_4 <- "";  
 issue <- 0
@@ -3894,11 +3958,15 @@ if (tipo == "cluster"){warning_df <- data.frame (issue_nr = 0, cluster_nr = 0,ma
   {warning_df <- data.frame (issue_nr = 0, metacluster_nr = 0,marker_name = "-", warning_txt = "")}
 warning_df <- warning_df[-1,] 
 
+matrice <- matrice_expr[, setdiff(colnames(matrice_expr), "clusterId")]
+exprsub <- normalize.function(matrice, quant) #this is to normalize the entire expression matrix
+matrice_expr <- cbind(exprsub, clusterId = clustId)
+
 for (i in 1:n_clust){ #from now on every analysis and function's study is related to the single cluster
-  
+  #if (i==1){browser()} #to debug selecting the analysis to study for debugging
   mat_list[[i]] <- matrice_expr[matrice_expr[, "clusterId"] == i,,drop=TRUE] 
   exprsub <- mat_list[[i]][, pDdesc_subset]
-  exprsub <- normalize.function(exprsub) #this is to normalize the entire expression matrix
+  #exprsub <- normalize.function(exprsub) #this is to normalize the entire expression matrix
   ggdf <- as.data.frame(exprsub)
   nr_event <- nrow(ggdf) #these r the number of events of the clusters: % = nr_event/Nr_event
   
@@ -3956,7 +4024,7 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
     ggplot2::geom_line(mapping = ggplot2::aes(y = scaled_df_dx), linewidth=1, color = "blue") +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks(n = 10))
   
-  #if (i==16){browser()} #to debug selecting the analysis with issues
+  #if (i==1){rbowser()} #to debug selecting the analysis to study for debugging
   vector_length <- length(ld_dens_sum$x)
   result_MFI <- studio_di_funzione(x_granularity = vector_length, dens_func = ld_dens_sum$y, derivate = scaled_df_dx, ilcluster = i, ilmarker = 0)
 # ilmarker = 0 because here we do not refer to any marker  
@@ -4017,11 +4085,11 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
   result_dens_sum_list[[i]] <- result_MFI
   
   if (!result_MFI$`min found`){ #save the plot if result_MFI$`min found`==FALSE
-    ggplot2::ggsave(filename = paste("_CS_",stringa,"cluster_","nr_",as.character(i)," MFI_study.png"), 
-                    plot = studio_MFI, device = "png", path = ("tmpdata/"))
+    if (n_clust < 100){ ggplot2::ggsave(filename = paste0("_CS_",stringa,"cluster_","nr_",as.character(i),"_MFI_study.png"), 
+                    plot = studio_MFI, device = "png", path = ("tmpdata/"))}
   #----------------------------------------------------------------------------------------------------------------------#
   # WARNING GENERATOR: if the minimum of the sum of densities has not been found
-    warning_msg <- paste("The minimum of the sum of densities of ", stringa, "cluster nr.",as.character(i), 
+    warning_msg <- paste("The minimum of the sum of densities of ",stringa,"cluster nr.",as.character(i), 
                            " has not been found: The related MFI cannot be correctly evaluated")
     warning_msg_2 <- paste(warning_msg_2,warning_msg, sep = "\n")
     issue <- issue+1
@@ -4029,9 +4097,10 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
     #----------------------------------------------------------------------------------------------------------------------#
   } 
   
-  if ((result_MFI$`x of minimum` < 0.25)||(result_MFI$`x of minimum` > 0.75)){ #save the plot if the min is "extreme"
-    ggplot2::ggsave(filename = paste("_CS_",stringa,"cluster_","nr_",as.character(i)," MFI_study.png"), 
-                    plot = studio_MFI, device = "png", path = paste0("tmpdata/"))
+  if ((result_MFI$`x of minimum` < 0.25)||(result_MFI$`x of minimum` > 0.75)&&(n_clust < 100)){ #save the plot if the min is "extreme"
+    if (n_clust < 100){
+      ggplot2::ggsave(filename = paste("_CS_",stringa,"cluster_","nr_",as.character(i)," MFI_study.png"), 
+                    plot = studio_MFI, device = "png", path = paste0("tmpdata/"))}
     #----------------------------------------------------------------------------------------------------------------------#
     # WARNING GENERATOR: the minimum is too close to the borders
     warning_msg <- paste("The MFI estimated for ", stringa, "cluster nr.",as.character(i), " is very close to the upper/lower
@@ -4043,12 +4112,12 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
     }
   
   for (j in 1:length(color_marker)){
-    #if ((i==67)&&(j==8)){browser()} #to debug selecting the analysis with issues
+    #if ((i==67)&&(j==8)){rbowser()} #to debug selecting the analysis with issues
     marker_density <- dplyr::filter(.data = ld_dens, colour == color_marker[j])
     ld_list[[j]]$layer_data = dplyr::select(.data = marker_density, colour,y,x,density,scaled,ndensity,count)
     ld_list[[j]]$marker <- marker_name[j]
     ld_list[[j]]$number_of_event <- nr_event 
-    
+    ld_list[[j]]$median <- median(exprsub[,j])
     # for each marker the layer_data stores the index position of the x (which is the expression range) and the y (that is the expression value of the density)
     f <- data.frame(expression_range = ld_list[[j]]$layer_data$x, marker_density = ld_list[[j]]$layer_data$density)
     ld_list[[j]]$dens_plot <- ggplot2::ggplot(data = f, ggplot2::aes(x = expression_range, y = marker_density)) + 
@@ -4087,6 +4156,8 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_vline(xintercept = new_MFI[i], linetype="twodash", color = "blue", linewidth=1.5) +
           ggplot2::geom_hline(yintercept = result$`density background`, linetype="dashed", color = "black", linewidth=1) +
           ggplot2::geom_hline(yintercept = max(ld_dens$density), linetype="dashed", color = "brown", linewidth=1) +
+          ggplot2::geom_vline(xintercept = ld_list[[j]]$median, linetype="dashed", color = "green", linewidth=1) +
+        
           ggplot2::geom_text(ggplot2::aes(x=result$`x of max1`, label=paste("x of max density","=",as.character(round(result$`x of max1`, digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(x=result$`x of minimum`, label=paste("x of min density","=",as.character(round(result$`x of minimum`, digits = 2))), 
@@ -4094,7 +4165,9 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_text(ggplot2::aes(x=new_MFI[i], label=paste("estimated MFI","=",as.character(round(new_MFI[i], digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(y=result$`density background`, label=paste("density background","=",as.character(round(result$`density background`, digits = 2))), x=0.5))+
-          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ",stringa,"cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))} 
+          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ",stringa,"cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))+
+          ggplot2::geom_text(ggplot2::aes(x=ld_list[[j]]$median, label=paste("median of marker = ",as.character(round(ld_list[[j]]$median, digits = 2))), 
+                                          y=max(ld_dens$density)/2), angle=90, vjust = 1.2)} 
       
       if ((result$`max1 found`)&&(result$`max2 found`)){
         studio_plot <- ld_list[[j]]$dens_plot + 
@@ -4104,6 +4177,8 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_vline(xintercept = new_MFI[i], linetype="twodash", color = "blue", linewidth=1.5) +
           ggplot2::geom_hline(yintercept = result$`density background`, linetype="dashed", color = "black", linewidth=1) +
           ggplot2::geom_hline(yintercept = max(ld_dens$density), linetype="dashed", color = "brown", linewidth=1) +
+          ggplot2::geom_vline(xintercept = ld_list[[j]]$median, linetype="dashed", color = "green", linewidth=1) +
+          
           ggplot2::geom_text(ggplot2::aes(x=result$`x of max1`, label=paste("x of max density","=",as.character(round(result$`x of max1`, digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(x=result$`x of minimum`, label=paste("x of min density","=",as.character(round(result$`x of minimum`, digits = 2))), 
@@ -4113,7 +4188,9 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_text(ggplot2::aes(x=new_MFI[i], label=paste("estimated MFI","=",as.character(round(new_MFI[i], digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(y=result$`density background`, label=paste("density background","=",as.character(round(result$`density background`, digits = 2))), x=0.5)) +
-          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ", stringa, "cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))}}
+          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ", stringa, "cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))+
+          ggplot2::geom_text(ggplot2::aes(x=ld_list[[j]]$median, label=paste("median of marker = ",as.character(round(ld_list[[j]]$median, digits = 2))), 
+                                          y=max(ld_dens$density)/2), angle=90, vjust = 1.2)}}
     else{
       if ((result$`max1 found`)&&(!result$`max2 found`)){
         studio_plot <- ld_list[[j]]$dens_plot + 
@@ -4121,12 +4198,16 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_vline(xintercept = new_MFI[i], linetype="twodash", color = "blue", linewidth=1.5) +
           ggplot2::geom_hline(yintercept = result$`density background`, linetype="dashed", color = "black", linewidth=1) +
           ggplot2::geom_hline(yintercept = max(ld_dens$density), linetype="dashed", color = "brown", linewidth=1) +
+          ggplot2::geom_vline(xintercept = ld_list[[j]]$median, linetype="dashed", color = "green", linewidth=1) +
+          
           ggplot2::geom_text(ggplot2::aes(x=result$`x of max1`, label=paste("x of max density","=",as.character(round(result$`x of max1`, digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(x=new_MFI[i], label=paste("estimated MFI","=",as.character(round(new_MFI[i], digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(y=result$`density background`, label=paste("density background","=",as.character(round(result$`density background`, digits = 2))), x=0.5))+
-          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ", stringa, "cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))} 
+          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ", stringa, "cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))+
+          ggplot2::geom_text(ggplot2::aes(x=ld_list[[j]]$median, label=paste("median of marker = ",as.character(round(ld_list[[j]]$median, digits = 2))), 
+                                          y=max(ld_dens$density)/2), angle=90, vjust = 1.2)} 
       
       if ((result$`max1 found`)&&(result$`max2 found`)){
         studio_plot <- ld_list[[j]]$dens_plot + 
@@ -4135,6 +4216,7 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_vline(xintercept = new_MFI[i], linetype="twodash", color = "blue", linewidth=1.5) +
           ggplot2::geom_hline(yintercept = result$`density background`, linetype="dashed", color = "black", linewidth=1) +
           ggplot2::geom_hline(yintercept = max(ld_dens$density), linetype="dashed", color = "brown", linewidth=1) +
+          ggplot2::geom_vline(yintercept = ld_list[[j]]$median, linetype="dashed", color = "green", linewidth=1) +
           ggplot2::geom_text(ggplot2::aes(x=result$`x of max1`, label=paste("x of max density","=",as.character(round(result$`x of max1`, digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(x=result$`x of max2`, label=paste("x of 2nd max density","=",as.character(round(result$`x of max2`, digits = 2))), 
@@ -4142,7 +4224,9 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
           ggplot2::geom_text(ggplot2::aes(x=new_MFI[i], label=paste("estimated MFI","=",as.character(round(new_MFI[i], digits = 2))), 
                                           y=max(ld_dens$density)/2, angle=90, vjust = 1.2)) +
           ggplot2::geom_text(ggplot2::aes(y=result$`density background`, label=paste("density background","=",as.character(round(result$`density background`, digits = 2))), x=0.5)) +
-          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ", stringa, "cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))}
+          ggplot2::geom_text(ggplot2::aes(y=max(ld_dens$density), label=paste("max marker density in the ", stringa, "cluster","=",as.character(round(max(ld_dens$density), digits = 2))), x=0.5))+
+          ggplot2::geom_text(ggplot2::aes(x=ld_list[[j]]$median, label=paste("median of marker = ",as.character(round(ld_list[[j]]$median, digits = 2))), 
+                                          y=max(ld_dens$density)/2), angle=90, vjust = 1.2)}
     }#else 
     
     result_marker_list[[j]] <- result
@@ -4157,10 +4241,14 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
       warning_df[nrow(warning_df) + 1,] <- c(as.character(issue+1), as.character(i), "-", "too few events")
     }
     #----------------------------------------------------------------------------------------------------------------------#
+    if (n_clust < 100){ #the plot is generated only if the number of cluster is less than 100 (flowSOM)
+    ggplot2::ggsave(filename = paste0(stringa,"cluster_nr_",as.character(i),"_density_of_marker_",as.character(j),".png"), 
+                    plot = studio_plot, device = "png", path = ("tmpdata/"))}
+    # this was inside the condition below: this is the attempt to show the density of the marker anyway
     
     if ((result$`max1 found`)&&(result$`max2 found`)){
-      ggplot2::ggsave(filename = paste("_FS_density_of_marker_",as.character(j),"_in_",stringa,"cluster_","nr_",as.character(i),".png"), 
-                      plot = studio_plot, device = "png", path = ("tmpdata/"))
+      #ggplot2::ggsave(filename = paste0(stringa,"cluster_nr_",as.character(i),"_density_of_marker_",as.character(j),".png"), 
+      #                plot = studio_plot, device = "png", path = ("tmpdata/"))
       #----------------------------------------------------------------------------------------------------------------------#
       # WARNING GENERATOR: if there are more than one single peak in the marker density
       warning_msg <- paste("There are more than a single density peak in ", stringa, "cluster nr.",as.character(i), 
@@ -4175,8 +4263,8 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
     if (((abs(new_MFI[i]- result$`x of max1`) < MIN_PEAK_DISTANCE_TO_SHOW_PLOT_REPORT)&&
          (result$`max1 found`))||((abs(new_MFI[i]- result$`x of max2`)< MIN_PEAK_DISTANCE_TO_SHOW_PLOT_REPORT)&&
                                   (result$`max2 found`))){
-      ggplot2::ggsave(filename = paste("_FS_density_of_marker_",as.character(j),"_in_",stringa,"cluster_","nr_",as.character(i),".png"), 
-                      plot = studio_plot, device = "png", path = ("tmpdata/"))
+      #ggplot2::ggsave(filename = paste(stringa,"cluster_nr_",as.character(i),"_density_of_marker",as.character(j),".png"), 
+      #                plot = studio_plot, device = "png", path = ("tmpdata/"))
       
       #----------------------------------------------------------------------------------------------------------------------#
       # WARNING GENERATOR: if the estimated MFI is closer than 3% to one on the maximum 
@@ -4193,7 +4281,6 @@ for (i in 1:n_clust){ #from now on every analysis and function's study is relate
   } # for each marker
   result_list[[i]] <- result_marker_list} #for each cluster
 
-color_marker
 logic_matrix <- matrix(data = 0, nrow = n_clust, ncol = length(color_marker))
 rownames(logic_matrix) <- 1:n_clust
 colnames(logic_matrix) <- names(color_marker)
@@ -4217,11 +4304,12 @@ for (i in 1:n_clust){
 #file_png_name = paste0("./tmpdata/Non_Single_Peak.png")
 #png(filename = file_png_name, width = 1300, height = 1000, units = "px", res = 125)
 test <- unique(as.vector(logic_matrix))
-if(length(test)!=1){png(filename = paste("./tmpdata/_FS_not_unique_peak_per_marker_per_",stringa,"cluster.png"), width = 1200, height = 900, units = "px", res = 125)
-  write.csv(x = logic_matrix, file = paste("./tmpdata/_FS_not_unique_peak_per_marker_per_",stringa,"cluster.csv"))}
-pheatmap::pheatmap(mat = logic_matrix, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE, 
+if(length(test)!=1){png(filename = paste0("./tmpdata/_FS_not_unique_peak_per_marker_per_",stringa,"cluster.png"), width = 1200, height = 900, units = "px", res = 125)
+  write.csv(x = logic_matrix, file = paste("./tmpdata/_FS_not_unique_peak_per_marker_per_",stringa,"cluster.csv"))
+  pheatmap::pheatmap(mat = logic_matrix, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE, 
                    main = "Non single density peak for each cluster x marker", color = c("white", "red"))
-dev.off()
+  dev.off()}
+
 #----------------------------------------------------------------------------------------------------------------------#
 
 # Notice that the more difficult markers (e.g. not so sharp density, tetramer, ...) do not have any red cell 
@@ -4237,6 +4325,7 @@ dev.off()
 # The expr_log table has the same meaning of the expr_log in the phenocluster function
 
 colnames(expr01_peak) <- marker_name 
+colnames(expr01_no_delta) <- marker_name 
 colnames(expr_log) <- marker_name 
 
 
@@ -4245,25 +4334,60 @@ colnames(expr_log) <- marker_name
 #
 # Notice: the pos_threshold and neg_threshold should be taken into account
 # 
-#browser()
+
 for (i in 1:n_clust){
   delta <- new_MFI[i] - 0.5
   for (j in 1:length(color_marker)){
     if ((result_list[[i]][[j]]$`max1 found`)&&(!result_list[[i]][[j]]$`max2 found`)){ # case of only one max found
-      new_x_peak <- result_list[[i]][[j]]$`x of max1` - delta} #delta could be positive or negative
+      new_x_peak <- result_list[[i]][[j]]$`x of max1` - delta #delta could be positive or negative
+      new_x_no_delta <-  result_list[[i]][[j]]$`x of max1`}   
     if ((result_list[[i]][[j]]$`max1 found`)&&(result_list[[i]][[j]]$`max2 found`)){
       if ((result_list[[i]][[j]]$'max1')>(result_list[[i]][[j]]$'max2')){new_x_peak <- result_list[[i]][[j]]$`x of max1` - delta}
-      else{new_x_peak <- result_list[[i]][[j]]$`x of max2` - delta}} # case of both max found the highest wins
+      else{new_x_peak <- result_list[[i]][[j]]$`x of max2` - delta
+           new_x_peak_no_delta <- result_list[[i]][[j]]$`x of max2`}} # case of both max found the highest wins
     if (new_x_peak < 0) {new_x_peak <- 0}
+    if (new_x_no_delta < 0) {new_x_no_delta <- 0}
     if (new_x_peak > 1) {new_x_peak <- 1}
+    if (new_x_no_delta > 1) {new_x_no_delta <- 1}
     expr01_peak[[j]][[i]] <- new_x_peak
+    expr01_no_delta[[j]][[i]] <- new_x_no_delta
     if (new_x_peak >= pos_threshold){expr_log[[j]][[i]] <- 1}
     if (new_x_peak < neg_threshold){expr_log[[j]][[i]] <- 0}
   }
 }
-expr01_peak <- cbind(cell_clustering = sequence(n_clust), expr01_peak)
+
+expr_log[expr_log == 1] <- "+"
+expr_log[expr_log == 0] <- "-"
+
+
 expr_log <- cbind(cell_clustering = sequence(n_clust), expr_log)
 warning_text <- paste(warning_msg_1,warning_msg_2, warning_msg_3, warning_msg_4, sep = "\n") 
+
+expr01_peak_matrix <- as.matrix(expr01_peak)
+expr01_no_delta_matrix <- as.matrix(expr01_no_delta)
+
+rownames(expr01_peak_matrix) <- 1:n_clust
+rownames(expr01_no_delta_matrix) <- 1:n_clust
+#expr01_peak_matrix <- cbind(cell_clustering = sequence(n_clust), expr01_peak_matrix)
+
+if(length(test)!=1){png(filename = paste0("./tmpdata/new_HM_",stringa,".png"), width = 1200, height = 900, units = "px", res = 125)
+  pheatmap::pheatmap(mat = expr01_peak_matrix, cluster_rows = TRUE, cluster_cols = TRUE, legend = TRUE, show_rownames = TRUE, show_colnames = TRUE,
+                   main = paste("New peak based",stringa,"cluster heatmap"), display_numbers = TRUE, number_color = "black", fontsize_number = 6, 
+                   fontsize_row = 7, fontsize_col = 7)
+  dev.off()}
+
+if(length(test)!=1){png(filename = paste0("./tmpdata/new_HM_no_delta",stringa,".png"), width = 1200, height = 900, units = "px", res = 125)
+  pheatmap::pheatmap(mat = expr01_no_delta_matrix, cluster_rows = TRUE, cluster_cols = TRUE, legend = TRUE, show_rownames = TRUE, show_colnames = TRUE,
+                     main = paste("New peak based",stringa,"cluster heatmap"), display_numbers = TRUE, number_color = "black", fontsize_number = 6, 
+                     fontsize_row = 7, fontsize_col = 7)
+  dev.off()}
+
+write.csv(as.data.frame(new_MFI),file = paste("./tmpdata/",stringa,"cluster_new_MFI.csv"), row.names = TRUE)
+write.csv(as.data.frame(expr_log),file = paste("./tmpdata/",stringa,"cluster_expr_log.csv"), row.names = FALSE)
+write.csv(as.data.frame(expr01_peak),file = paste("./tmpdata/",stringa,"cluster_expr01_peak.csv"), row.names = TRUE)
+write.csv(as.data.frame(expr01_no_delta),file = paste("./tmpdata/",stringa,"cluster_expr01_no_delta.csv"), row.names = TRUE)
+write.csv(warning_df,file = paste("./tmpdata/",stringa,"cluster_warning.csv"), row.names = FALSE)
+
 # use cat(warning_text) to show with <CR>
 
 ############## Try to organize the warnings in a table. See http://www.sthda.com/english/wiki/writing-data-from-r-to-txt-csv-files-r-base-functions
@@ -4350,7 +4474,7 @@ join_tag <- function(frame, meta, type, tag1col=NULL, tag2col=NULL, tag3col=NULL
     df <- as.data.frame(exprs(frame)[,c("SampleID", "clusterId", "meta_clusterId")])} # all numeric as a class
   else
     {df <- as.data.frame(exprs(frame)[,c("SampleID", "clusterId")])}
-  
+
   meta$SampleID <- as.numeric(1:nrow(meta))
   rj <- right_join(meta,df)
   rj <- rj[,-(1:2)]
@@ -4364,6 +4488,8 @@ join_tag <- function(frame, meta, type, tag1col=NULL, tag2col=NULL, tag3col=NULL
   rj$SampleID <- factor(rj$SampleID)
   rj$clusterId <- factor(rj$clusterId)
   if (type == "meta"){rj$meta_clusterId <- factor(rj$meta_clusterId)}
+  meta_factor <- meta
+  #for (i in 1:4){meta_factor[,i+2] <- (as.numeric(factor(meta_factor[,i+2])))}
   for (i in 1:4){meta[,i+2] <- (as.numeric(factor(meta[,i+2])))}
   
   #sample by clusterId
@@ -4416,7 +4542,7 @@ join_tag <- function(frame, meta, type, tag1col=NULL, tag2col=NULL, tag3col=NULL
       foo <- paste0("dcast(data = sample_rj, formula = meta_clusterId ~ ",nomi_tag[k], " + SampleID, value.var = 'perc')")
       parsed <- parse(text = foo)
       cast_rj <- eval(expr = parsed)
-      filename <- paste0("./tmpdata/meta_clasterId_",nomi_tag[k],"_cast")
+      filename <- paste0("./tmpdata/meta_clusterId_",nomi_tag[k],"_cast")
       write.csv(x = cast_rj, file = paste0(filename, ".csv"))}
     
     foo <- paste0("dcast(data = sample_rj, formula = meta_clusterId ~ ",nomi_tag[1], " + SampleID, value.var = 'perc')")
@@ -4504,7 +4630,7 @@ join_tag <- function(frame, meta, type, tag1col=NULL, tag2col=NULL, tag3col=NULL
 }
 
 
-plot_labellingbar <- function(flow_Set, flag, cell_label, phenoclust, NMC, metadata, color_pheno, save = NULL, work = NULL) {
+plot_labellingbar <- function(flow_Set, flag, cell_label, NMC, metadata, color_pheno, save = NULL, work = NULL) {
 
   ################## sample_id
   
@@ -4524,10 +4650,6 @@ plot_labellingbar <- function(flow_Set, flag, cell_label, phenoclust, NMC, metad
   ggdf_sample <- melt(data.frame(cluster = cluster_list, props), 
                       id.vars = "cluster", value.name = "proportion", variable.name = "sample_id")
   
-  if (is.null(work)){file_name <- "./tmpdata/df_sample.csv"}
-  else {file_name <- paste0("./tmpdata/df_sample_wf", as.character(work),".csv")}
-  write.csv(x = ggdf_sample, file = file_name)
- 
   gg_sample <- ggplot(ggdf_sample, aes(x = sample_id, y = proportion, fill = cluster)) +
     geom_bar(stat = "identity") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -4935,3 +5057,312 @@ plot_stream <- function(flow_Set, flag, phenoclust, cell_label, metadata, NMC, c
   lista <- list(stream_plot_prop, stream_plot_counts)
   return(lista)
 }
+
+
+sample_cluster_df <- function(flow_Set, flag, cell_label, NMC, metadata, work = NULL) {
+  
+  ################## sample_id
+  
+  sample_ids <- rep(metadata$sample_id, fsApply(flow_Set, nrow))
+  counts_table <- table(cell_label, sample_ids)
+  props_table <- t(t(counts_table) / colSums(counts_table)) * 100
+  counts <- as.data.frame.matrix(counts_table)
+  props <- as.data.frame.matrix(props_table)
+  #For each sample, we plot its PBMC cell type composition represented with colored bars, 
+  #where the size of a given stripe reflects the proportion of the corresponding cell type in a given sample
+
+  if (flag)
+  {cluster_list <- factor(rownames(props), levels = 1:NMC)}
+  else
+  {cluster_list <- rownames(props)}
+  
+  ggdf_sample <- melt(data.frame(cluster = cluster_list, props), 
+                      id.vars = "cluster", value.name = "proportion", variable.name = "sample_id")
+  
+  if (is.null(work)){file_name <- "./tmpdata/df_sample.csv"}
+  else {file_name <- paste0("./tmpdata/df_sample_wf", as.character(work),".csv")}
+  write.csv(x = ggdf_sample, file = file_name)
+  return(ggdf_sample)
+}
+
+
+cluster_t_test <- function(df_sample_wf, NMC, metadata, work = NULL) {
+#
+# this procedure is to build a t_test table from the df_condition table in which the rows are related to 
+# clusters and the columns are the sample and the related characteristic of the sample metadata 
+#
+  
+  metadata <- mt #passing the global dataframe to keep the original values (for some reason the dataframe changes inside the function)
+  sample_ids <- metadata$sample_id 
+  nr_samples <- length(sample_ids)
+  nr_clusters <- length(levels(factor(df_sample_wf$cluster)))
+  nr_tags1 <- length(levels(factor(metadata[,3])))
+  nr_tags2 <- length(levels(factor(metadata[,4])))
+  nr_tags3 <- length(levels(factor(metadata[,5])))
+  nr_tags4 <- length(levels(factor(metadata[,6])))
+  
+  v_tags1 <- levels(factor(metadata[,3]))
+  v_tags2 <- levels(factor(metadata[,4]))
+  v_tags3 <- levels(factor(metadata[,5]))
+  v_tags4 <- levels(factor(metadata[,6]))
+  
+  p_val <- vector(mode = "numeric",length = NMC)
+  eff_size <- vector(mode = "numeric",length = NMC)
+  
+  colonne <- colnames(metadata)[-c(1,2)]
+  somma <- 0
+  #the first loop i for producing the necessary columns to add to the tt_in dataframe. In general there will be 
+  # n*(n-1)/2 numbers of columns to add, where n is the length of each tag
+  
+  tt_in <- reshape2::dcast(data = df_sample_wf, formula = cluster ~ sample_id, fun.aggregate = sum, value.var = "proportion")
+  if(nr_tags1>1){
+    combo <- vector(length = nr_tags1*(nr_tags1-1)/2)
+    combinazioni <- t(combn(v_tags1, 2)) 
+    for(i in seq_along(1:(nrow(combinazioni)))){ 
+      combo[i] <- paste0(combinazioni[i,1],"_vs_",combinazioni[i,2])
+    }
+    for (j in 1:(nr_tags1*(nr_tags1-1)/2)){
+      subs_tag<- subset(metadata, metadata[,3] == combinazioni[j,1])
+      first_group <- subs_tag[,"sample_id"]
+      subs_tag<- subset(metadata, metadata[,3] == combinazioni[j,2])
+      second_group <- subs_tag[,"sample_id"]
+      tt_in <- tt_in %>% mutate(p_value=p_val)
+      tt_in <- tt_in %>% mutate(eff_size=eff_size)
+      colnames(tt_in)[colnames(tt_in) == "p_value"] <- paste0("p_",combo[j])
+      colnames(tt_in)[colnames(tt_in) == "eff_size"] <- paste0("ES_",combo[j])
+    }
+    tt_out <- tt_in
+    
+    for (i in 1:NMC){
+      for (j in 1:(nr_tags1*(nr_tags1-1)/2)){
+        subs_tag<- subset(metadata, metadata[,3] == combinazioni[j,1])
+        first_group <- subs_tag[,"sample_id"]
+        subs_tag<- subset(metadata, metadata[,3] == combinazioni[j,2])
+        second_group <- subs_tag[,"sample_id"]
+        
+        primo <- t(tt_out[i, first_group])
+        secondo <- t(tt_out[i, second_group])
+        primo <- cbind(primo, rep(combinazioni[j, 1], length(primo)))
+        secondo <- cbind(secondo, rep(combinazioni[j, 2], length(secondo)))
+        df <- as.data.frame(rbind(primo, secondo))
+        colnames(df) <- c("values", "group")
+        df$group <- factor(df$group)
+        df$values <- as.numeric(df$values)
+        
+        options(warn = 1) # Turn warnings into errors so they can be trapped
+        #old_t_res <- try(t.test(x = tt_out[i,first_group], y =  tt_out[i,second_group], alternative = "two.sided", var.equal = TRUE), silent = FALSE)
+        t_res <- try(rstatix::t_test(data = df, formula = values ~ group, alternative = "two.sided", var.equal = TRUE, paired = FALSE), silent = FALSE)
+        cohen <- try(rstatix::cohens_d(data = df, formula = values ~ group, var.equal = TRUE, paired = FALSE), silent = FALSE)
+        
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,1+nr_samples+j] <- t_res$p
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,1+nr_samples+j] <- NaN
+          options(warn = 0)}
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,2+nr_samples+j] <- abs(cohen$effsize)
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,2+nr_samples+j] <- NaN
+          options(warn = 0)}
+      }
+    }
+    if (is.null(work)){file_name <- "./tmpdata/df_t_test_tag1.csv"} else 
+    {file_name <- paste0("./tmpdata/df_t_test_tag1_wf", as.character(work),".csv")}
+    write.csv(x = tt_out, file = file_name)
+    print("t_test for tag1 produced")
+  }
+  
+  ####### tag2
+  tt_in <- reshape2::dcast(data = df_sample_wf, formula = cluster ~ sample_id, fun.aggregate = sum, value.var = "proportion")
+  if(nr_tags2>1){
+    combo <- vector(length = nr_tags2*(nr_tags2-1)/2)
+    combinazioni <- t(combn(v_tags2, 2)) 
+    for(i in seq_along(1:(nrow(combinazioni)))){ 
+      combo[i] <- paste0(combinazioni[i,1],"_vs_",combinazioni[i,2])
+    }
+    for (j in 1:(nr_tags2*(nr_tags2-1)/2)){
+      subs_tag<- subset(metadata, metadata[,4] == combinazioni[j,1])
+      first_group <- subs_tag[,"sample_id"]
+      subs_tag<- subset(metadata, metadata[,4] == combinazioni[j,2])
+      second_group <- subs_tag[,"sample_id"]
+      tt_in <- tt_in %>% mutate(p_value=p_val)
+      tt_in <- tt_in %>% mutate(eff_size=eff_size)
+      colnames(tt_in)[colnames(tt_in) == "p_value"] <- paste0("p_",combo[j])
+      colnames(tt_in)[colnames(tt_in) == "eff_size"] <- paste0("ES_",combo[j])
+    }
+    tt_out <- tt_in
+    
+    for (i in 1:NMC){
+      for (j in 1:(nr_tags2*(nr_tags2-1)/2)){
+        subs_tag<- subset(metadata, metadata[,4] == combinazioni[j,1])
+        first_group <- subs_tag[,"sample_id"]
+        subs_tag<- subset(metadata, metadata[,4] == combinazioni[j,2])
+        second_group <- subs_tag[,"sample_id"]
+        
+        primo <- t(tt_out[i, first_group])
+        secondo <- t(tt_out[i, second_group])
+        primo <- cbind(primo, rep(combinazioni[j, 1], length(primo)))
+        secondo <- cbind(secondo, rep(combinazioni[j, 2], length(secondo)))
+        df <- as.data.frame(rbind(primo, secondo))
+        colnames(df) <- c("values", "group")
+        df$group <- factor(df$group)
+        df$values <- as.numeric(df$values)
+        
+        options(warn = 1) # Turn warnings into errors so they can be trapped
+        old_t_res <- try(t.test(x = tt_out[i,first_group], y =  tt_out[i,second_group], alternative = "two.sided", var.equal = TRUE), silent = FALSE)
+        t_res <- try(rstatix::t_test(data = df, formula = values ~ group, alternative = "two.sided", var.equal = TRUE, paired = FALSE), silent = FALSE)
+        cohen <- try(rstatix::cohens_d(data = df, formula = values ~ group, var.equal = TRUE, paired = FALSE), silent = FALSE)
+        
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,1+nr_samples+j] <- t_res$p
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,1+nr_samples+j] <- NaN
+          options(warn = 0)}
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,2+nr_samples+j] <- abs(cohen$effsize)
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,2+nr_samples+j] <- NaN
+          options(warn = 0)}
+      }
+    }
+    if (is.null(work)){file_name <- "./tmpdata/df_t_test_tag2.csv"} else 
+    {file_name <- paste0("./tmpdata/df_t_test_tag2_wf", as.character(work),".csv")}
+    write.csv(x = tt_out, file = file_name)
+    print("t_test for tag2 produced")
+  }
+  
+  ####### tag3
+  tt_in <- reshape2::dcast(data = df_sample_wf, formula = cluster ~ sample_id, fun.aggregate = sum, value.var = "proportion")
+  if(nr_tags3>1){
+    combo <- vector(length = nr_tags3*(nr_tags3-1)/2)
+    combinazioni <- t(combn(v_tags3, 2)) 
+    for(i in seq_along(1:(nrow(combinazioni)))){ 
+      combo[i] <- paste0(combinazioni[i,1],"_vs_",combinazioni[i,2])
+    }
+    for (j in 1:(nr_tags3*(nr_tags3-1)/2)){
+      subs_tag<- subset(metadata, metadata[,5] == combinazioni[j,1])
+      first_group <- subs_tag[,"sample_id"]
+      subs_tag<- subset(metadata, metadata[,5] == combinazioni[j,2])
+      second_group <- subs_tag[,"sample_id"]
+      tt_in <- tt_in %>% mutate(p_value=p_val)
+      tt_in <- tt_in %>% mutate(eff_size=eff_size)
+      colnames(tt_in)[colnames(tt_in) == "p_value"] <- paste0("p_",combo[j])
+      colnames(tt_in)[colnames(tt_in) == "eff_size"] <- paste0("ES_",combo[j])
+    }
+    tt_out <- tt_in
+    
+    for (i in 1:NMC){
+      for (j in 1:(nr_tags3*(nr_tags3-1)/2)){
+        subs_tag<- subset(metadata, metadata[,5] == combinazioni[j,1])
+        first_group <- subs_tag[,"sample_id"]
+        subs_tag<- subset(metadata, metadata[,5] == combinazioni[j,2])
+        second_group <- subs_tag[,"sample_id"]
+        
+        primo <- t(tt_out[i, first_group])
+        secondo <- t(tt_out[i, second_group])
+        primo <- cbind(primo, rep(combinazioni[j, 1], length(primo)))
+        secondo <- cbind(secondo, rep(combinazioni[j, 2], length(secondo)))
+        df <- as.data.frame(rbind(primo, secondo))
+        colnames(df) <- c("values", "group")
+        df$group <- factor(df$group)
+        df$values <- as.numeric(df$values)
+        
+        options(warn = 1) # Turn warnings into errors so they can be trapped
+        old_t_res <- try(t.test(x = tt_out[i,first_group], y =  tt_out[i,second_group], alternative = "two.sided", var.equal = TRUE), silent = FALSE)
+        t_res <- try(rstatix::t_test(data = df, formula = values ~ group, alternative = "two.sided", var.equal = TRUE, paired = FALSE), silent = FALSE)
+        cohen <- try(rstatix::cohens_d(data = df, formula = values ~ group, var.equal = TRUE, paired = FALSE), silent = FALSE)
+        
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,1+nr_samples+j] <- t_res$p
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,1+nr_samples+j] <- NaN
+          options(warn = 0)}
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,2+nr_samples+j] <- abs(cohen$effsize)
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,2+nr_samples+j] <- NaN
+          options(warn = 0)}
+      }
+    }
+    if (is.null(work)){file_name <- "./tmpdata/df_t_test_tag3.csv"} else 
+    {file_name <- paste0("./tmpdata/df_t_test_tag3_wf", as.character(work),".csv")}
+    write.csv(x = tt_out, file = file_name)
+    print("t_test for tag3 produced")
+  }
+  
+  ####### tag4
+  tt_in <- reshape2::dcast(data = df_sample_wf, formula = cluster ~ sample_id, fun.aggregate = sum, value.var = "proportion")
+  if(nr_tags4>1){
+    combo <- vector(length = nr_tags4*(nr_tags4-1)/2)
+    combinazioni <- t(combn(v_tags4, 2)) 
+    for(i in seq_along(1:(nrow(combinazioni)))){ 
+      combo[i] <- paste0(combinazioni[i,1],"_vs_",combinazioni[i,2])
+    }
+    for (j in 1:(nr_tags2*(nr_tags2-1)/2)){
+      subs_tag<- subset(metadata, metadata[,6] == combinazioni[j,1])
+      first_group <- subs_tag[,"sample_id"]
+      subs_tag<- subset(metadata, metadata[,6] == combinazioni[j,2])
+      second_group <- subs_tag[,"sample_id"]
+      tt_in <- tt_in %>% mutate(p_value=p_val)
+      tt_in <- tt_in %>% mutate(eff_size=eff_size)
+      colnames(tt_in)[colnames(tt_in) == "p_value"] <- paste0("p_",combo[j])
+      colnames(tt_in)[colnames(tt_in) == "eff_size"] <- paste0("ES_",combo[j])
+    }
+    tt_out <- tt_in
+    
+    for (i in 1:NMC){
+      for (j in 1:(nr_tags4*(nr_tags4-1)/2)){
+        subs_tag<- subset(metadata, metadata[,6] == combinazioni[j,1])
+        first_group <- subs_tag[,"sample_id"]
+        subs_tag<- subset(metadata, metadata[,6] == combinazioni[j,2])
+        second_group <- subs_tag[,"sample_id"]
+        
+        primo <- t(tt_out[i, first_group])
+        secondo <- t(tt_out[i, second_group])
+        primo <- cbind(primo, rep(combinazioni[j, 1], length(primo)))
+        secondo <- cbind(secondo, rep(combinazioni[j, 2], length(secondo)))
+        df <- as.data.frame(rbind(primo, secondo))
+        colnames(df) <- c("values", "group")
+        df$group <- factor(df$group)
+        df$values <- as.numeric(df$values)
+        
+        options(warn = 1) # Turn warnings into errors so they can be trapped
+        old_t_res <- try(t.test(x = tt_out[i,first_group], y =  tt_out[i,second_group], alternative = "two.sided", var.equal = TRUE), silent = FALSE)
+        t_res <- try(rstatix::t_test(data = df, formula = values ~ group, alternative = "two.sided", var.equal = TRUE, paired = FALSE), silent = FALSE)
+        cohen <- try(rstatix::cohens_d(data = df, formula = values ~ group, var.equal = TRUE, paired = FALSE), silent = FALSE)
+        
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,1+nr_samples+j] <- t_res$p
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,1+nr_samples+j] <- NaN
+          options(warn = 0)}
+        if (inherits(x = t_res,"rstatix_test")){ 
+          tt_out[i,2+nr_samples+j] <- abs(cohen$effsize)
+          options(warn = 0)}
+        else{ # Ignore warnings while processing errors
+          options(warn = -1)
+          tt_out[i,2+nr_samples+j] <- NaN
+          options(warn = 0)}
+      }
+    }
+    if (is.null(work)){file_name <- "./tmpdata/df_t_test_tag2.csv"} else 
+    {file_name <- paste0("./tmpdata/df_t_test_tag4_wf", as.character(work),".csv")}
+    write.csv(x = tt_out, file = file_name)
+    print("t_test for tag4 produced")
+  }
+}
+

@@ -114,7 +114,7 @@ server <- function(input, output, session) {
     del_tmpdata(type = "all")
 
     if(!is.null(input$fSinput)||!is.null(input$zipinput)) {
-      
+
       if (!is.null(input$fSinput)){
         alphafSinput <-  input$fSinput[order(input$fSinput$name),] 
         lista <- loading_fS(inputfile = alphafSinput$datapath, tipo = "flowSet")
@@ -389,7 +389,8 @@ server <- function(input, output, session) {
       output$c.handledEvents <- renderValueBox({
         valueBox(value = dI.c_val$fS_summary[3],subtitle =  "Total output events", icon = icon("list"), color = "red")})
       output$c.percEvents <- renderValueBox({
-        measure <- 1 - (as.numeric(dI.c_val$fS_summary[2]) - as.numeric(dI.c_val$fS_summary[3]))/as.numeric(dI.c_val$fS_summary[2])
+        measure <- 1 - (as.numeric(dI.c_val$fS_summary[2]) - 
+                          as.numeric(dI.c_val$fS_summary[3]))/as.numeric(dI.c_val$fS_summary[2])
         valueBox(value = paste0(round(100 * measure, digits = 1),"%"),
                  subtitle =  "Percentage of remaining events", icon = icon("list"), color = "red")})
       
@@ -537,7 +538,8 @@ server <- function(input, output, session) {
     if(inherits(x = dI.t(),"flowSet")) {
       del_tmpdata("all")
       print("save the whole transformed flowSet with all the original channels")
-      output$console_output_pre <- renderPrint("save the transformed flowSet with all the original channels - waiting...")  
+      output$console_output_pre <- renderPrint("save the transformed flowSet with all the original channels - 
+                                               waiting...")  
       fFvectorName <- vector(mode = "character", length(dI.t()))
       for (i in seq_along(1:length(dI.t()))){
         fFvectorName[[i]] <- dI.t()[[i]]@description$FILENAME}
@@ -789,9 +791,9 @@ server <- function(input, output, session) {
   
   dI.d <- reactiveVal(NULL)
   dI.d.b4 <- reactiveVal(NULL)
-  dI.d_val <- reactiveValues(fS_table = NULL, fS_comp = NULL, fS_comp_plot = NULL, fS_summary = NULL, pd = NULL, dd = NULL, 
-                             b4_score_plot = NULL, b4_dens_plot = NULL, after_score_plot = NULL, after_dens_plot = NULL,
-                             comb_flag = NULL, no_down_flag = NULL)
+  dI.d_val <- reactiveValues(fS_table = NULL, fS_comp = NULL, fS_comp_plot = NULL, fS_summary = NULL, pd = NULL, 
+                             dd = NULL, b4_score_plot = NULL, b4_dens_plot = NULL, after_score_plot = NULL, 
+                             after_dens_plot = NULL, comb_flag = NULL, no_down_flag = NULL)
   
   observeEvent(eventExpr = input$runDown, {
     
@@ -801,8 +803,9 @@ server <- function(input, output, session) {
     dI.d_val$fS_table <- NULL; dI.d_val$fS_comp <- NULL; dI.d_val$fS_comp_plot <- NULL; dI.d_val$pd <- NULL; 
     dI.d_val$fS_summary[2] <- "refresh...";
     dI.d_val$fS_summary[3] <- "refresh...";
-    dI.d_val$dd <- NULL; dI.d_val$b4_score_plot <- NULL; dI.d_val$b4_dens_plot <- NULL; dI.d_val$after_score_plot <- NULL; 
-    dI.d_val$after_dens_plot <- NULL; dI.d_val$comb_flag <- NULL; dI.d_val$no_down_flag <- NULL
+    dI.d_val$dd <- NULL; dI.d_val$b4_score_plot <- NULL; dI.d_val$b4_dens_plot <- NULL; 
+    dI.d_val$after_score_plot <- NULL; dI.d_val$after_dens_plot <- NULL; dI.d_val$comb_flag <- NULL; 
+    dI.d_val$no_down_flag <- NULL
     
     if(!("downsample" %in% input$process)){
       result <- "please go back to the 'Loading & parsing samples' tab and select the 'downsample' module"
@@ -845,15 +848,16 @@ server <- function(input, output, session) {
             for (i in seq_along(1:length(dI.H()))){
               if (dim(exprs(dI.H()[[i]]))[1] < MIN_SAMPLE_LENGTH){ #MIN_SAMPLE_LENGTH
                 dI.d_val$no_down_flag <- TRUE
-                fS.d <- paste0("Impossible to perform downsampling process if the number of events of sample nr.",as.character(i),
-                               " is too small (", as.character(dim(exprs(dI.H()[[i]]))[1]), " < MIN_SAMPLE_LENGTH = ", 
-                               as.character(MIN_SAMPLE_LENGTH),")")
+                fS.d <- paste0("Impossible to perform downsampling process if the number 
+                               of events of sample nr.",as.character(i),
+                               " is too small (", as.character(dim(exprs(dI.H()[[i]]))[1]), 
+                               " < MIN_SAMPLE_LENGTH = ", as.character(MIN_SAMPLE_LENGTH),")")
                 break}}
               
             if ((input$down_algo == "spade")&&(dI.d_val$no_down_flag==FALSE)){
               dI.d_val$comb_flag <- TRUE
-              fS.d <- spade_fS(flow_Set = fS, stringhe = fFvectorName, type = input$down_type, p1 = input$down_percentile, 
-                               p2 = 100, seed = input$set_seed)
+              fS.d <- spade_fS(flow_Set = fS, stringhe = fFvectorName, type = input$down_type, 
+                               p1 = input$down_percentile, p2 = 100, seed = input$set_seed)
 #in case type = input$down_type = down_val, the flowSet returned, have the density dim: no downsampling is executed 
               if (inherits(x = fS.d,"flowSet")){
                 
@@ -911,10 +915,12 @@ server <- function(input, output, session) {
                 if ((inherits(x = prefix,"character"))&&(unique(substr(prefix, start = 1, stop = 6)!="System")))
                   {fS.d <- read.flowSet(files = prefix, truncate_max_range = FALSE)} else {fS.d <- prefix}}} 
 
-            if (input$down_algo %in% c("RKOF", "LOOP", "LOF", "LDF", "KNN_SUM", "KNN_AGG", "LDE")&&(dI.d_val$no_down_flag==FALSE)){
+            if (input$down_algo %in% c("RKOF", "LOOP", "LOF", "LDF", "KNN_SUM", "KNN_AGG", "LDE")&&
+                (dI.d_val$no_down_flag==FALSE)){
               dI.d_val$comb_flag <- TRUE
-              fS <- outlier_score(flow_Set = dI.H(), stringhe = fFvectorName, algo = input$down_algo, kappa = input$down_kappa, 
-                                    kappa_max = input$down_kappa_max, par = input$down_par, seed = input$set_seed)
+              fS <- outlier_score(flow_Set = dI.H(), stringhe = fFvectorName, algo = input$down_algo, 
+                                  kappa = input$down_kappa, kappa_max = input$down_kappa_max, 
+                                  par = input$down_par, seed = input$set_seed)
 #the outlier_score is the routine producing the score with the selected algorithm (no spade)                
               if (inherits(x = fS,"flowSet")){
                 score <- plot_score(flow_Set = fS, type = input$down_algo, sample_color = color.sample)
@@ -969,7 +975,8 @@ server <- function(input, output, session) {
   
       validate(need(expr = !is.null(dI.H()), message = "press run to downsample the FCS files"))
       print("start data visualization process of the downsampled flowSet")
-      output$console_output_pre <- renderPrint("start data visualization process of the downsampled flowSet - waiting...")
+      output$console_output_pre <- renderPrint("start data visualization process of the downsampled flowSet - 
+                                               waiting...")
       
       dI.d_val$fS_table <- table_fS(flow_Set  = dI.H())[[1]]
       
@@ -1017,7 +1024,8 @@ server <- function(input, output, session) {
       output$d.handledEvents <- renderValueBox({
         valueBox(value = dI.d_val$fS_summary[3],subtitle =  "Total output events", icon = icon("list"), color = "red")})
       output$d.percEvents <- renderValueBox({
-        measure <- 1 - (as.numeric(dI.d_val$fS_summary[2]) - as.numeric(dI.d_val$fS_summary[3]))/as.numeric(dI.d_val$fS_summary[2])
+        measure <- 1 - (as.numeric(dI.d_val$fS_summary[2]) - 
+                          as.numeric(dI.d_val$fS_summary[3]))/as.numeric(dI.d_val$fS_summary[2])
         valueBox(value = paste0(round(100*measure, digits = 1),"%"),
                  subtitle =  "Percentage of remaining events", icon = icon("list"), color = "red")})
       print("Visualization process ends")
@@ -1154,7 +1162,8 @@ server <- function(input, output, session) {
     
     if(inherits(x = dI.co(),"flowFrame")) {
       print("start data visualization process of the concatenated flowSet")
-      output$console_output_pre <- renderPrint("start data visualization process of the concatenated flowSet - waiting...")
+      output$console_output_pre <- renderPrint("start data visualization process of the concatenated flowSet - 
+                                               waiting...")
       
       del_tmpdata()
       validate(need(expr = !is.null(dI.co()), message = "press run to concatenate FCS files"))
@@ -1210,6 +1219,7 @@ server <- function(input, output, session) {
     del_tmpdata(type = "all")
   
     if(!is.null(input$fSmeta_in)||!is.null(input$zipmeta_in)) {
+      
       if (!is.null(input$fSmeta_in)){
         alphafSinput <-  input$fSmeta_in[order(input$fSmeta_in$name),] 
         lista <- loading_fS(inputfile = alphafSinput$datapath, tipo = "flowSet")
@@ -1238,7 +1248,7 @@ server <- function(input, output, session) {
         options(warn = 2) # Turn warnings into errors so they can be trapped
         result <- try(expr = read.csv(file=input$meta_file$datapath, header=TRUE, sep=",", check.names = TRUE, 
                                       #with check names all spaces in names are mutated in "."
-                                    colClasses = c("character", "character", "character", "character", "character", "character"))) 
+                          colClasses = c("character", "character", "character", "character", "character", "character"))) 
                                                 #??? to set the last elemetn to "Date"
         if (inherits(x = result,"data.frame")){
           options(warn = 0)
@@ -1257,7 +1267,7 @@ server <- function(input, output, session) {
           options(warn = 2) # Turn warnings into errors so they can be trapped
           result <- try(expr = read.csv(file=input$meta_file$datapath, header=TRUE, sep=";", check.names = TRUE, 
                                         #with check names all spaces in names are mutated in "."
-                                        colClasses = c("character", "character", "character", "character", "character", "character"))) 
+                            colClasses = c("character", "character", "character", "character", "character", "character"))) 
                                                 #??? to set the last elemtn to "Date"
           if (inherits(x = result,"data.frame")){
             options(warn = 0)
@@ -1274,7 +1284,8 @@ server <- function(input, output, session) {
         if ((inherits(x = mt_in, "data.frame"))&&(ncol(mt_in)==7)&&(nrow(mt_in)==length(fSmeta()))){
           names(mt_in) <- trimws(names(mt_in))
           names(mt_in) <- gsub("\\.", "_", names(mt_in)) #to change "." to "_"
-          names(mt_in) <- make.names(names = names(mt_in), unique = TRUE) #to make syntactically valid names out of character vectors
+          names(mt_in) <- make.names(names = names(mt_in), unique = TRUE) 
+          #to make syntactically valid names out of character vectors
           mt_in[,3] <-  trimws(mt_in[,3]) #to remove spaces 
           mt_in[,4] <-  trimws(mt_in[,4]) #to remove spaces 
           mt_in[,5] <-  trimws(mt_in[,5]) #to remove spaces 
@@ -1287,7 +1298,7 @@ server <- function(input, output, session) {
           mt_in[,4] <- make.names(names = mt_in[,4], unique = FALSE)
           mt_in[,5] <- make.names(names = mt_in[,5], unique = FALSE)
           mt_in[,6] <- make.names(names = mt_in[,6], unique = FALSE)
-          mt_in[,7] <- as.Date(x = mt_in[,7],format="%m/%d/%Y")
+          #mt_in[,7] <- as.Date(x = mt_in[,7],format="%m/%d/%Y")
           set.seed(input$set_seed)
           color.sample <<- set_colors(nrow(mt_in))
           
@@ -1332,12 +1343,6 @@ server <- function(input, output, session) {
                              ". You may start downloading meta-table automatically ",         
                              "generated when you do not provide any table in input. 
                              Try to manipulate that one according to your use and try with this new version")
-        validate(need(expr =  (mt_ok), message = messaggio))}})}
-        else{
-          output$checktxt_loading_meta_fS <- renderText({
-          {messaggio <- paste0("something is wrong with the loaded meta-table.", "You may start downloading meta-table automatically ",         
-                               "generated when you do not provide any table in input. 
-                               Try to manipulate that one according to your use and try with this new version")
         validate(need(expr =  (mt_ok), message = messaggio))}})}}}
     else
       {if (!(inherits(x = fSmeta(),"flowSet"))){
@@ -1353,6 +1358,7 @@ server <- function(input, output, session) {
     validate(need(expr = (inherits(x = mt,"data.frame")), message = "It needs valid dataframe"))
     validate(need(expr = !is.null(meta.table()), message = "It needs a valid meta.table"))
     hotmeta <- input$hot_meta
+    
     if (!is.null(hotmeta)) 
     {#
       #mt <<- hot_to_r(hotmeta) #commented because hot_to_r transforms the dates in 'NA'
@@ -1363,14 +1369,15 @@ server <- function(input, output, session) {
     uni.tag3 <<- length(unique(mt[,5]))
     uni.tag4 <<- length(unique(mt[,6]))
     
-    if (input$time_step == TRUE){
-      validate(need(expr = (length(date_s)==length(fSmeta())), message = "It needs some congruent meta-data"))
-      validate(need(expr = ((date_s[1])==mt$date[1] &&  #check the date value
-                              date_s[length(date_s)]==mt$date[length(mt$date)] &&  #check the date length
-                              uni.tag4 == unique.date), message = "It needs some congruent meta-data"))}
+    #if (input$time_step == TRUE){
+      #validate(need(expr = (length(date_s)==length(fSmeta())), message = "It needs some congruent meta-data"))
+      #validate(need(expr = ((date_s[1])==mt$date[1] &&  #check the date value
+      #                        date_s[length(date_s)]==mt$date[length(mt$date)] &&  #check the date length
+      #                        uni.tag4 == unique.date), message = "It needs some congruent meta-data"))}
     
     #totale <- uni.tag1 + uni.tag2 + uni.tag3 + input$MetaClustNum
-    #since the color.metaclust is much more important to set than the rest of the colors, let's put it as a first color set in order to assign
+    #since the color.metaclust is much more important to set than the rest of the colors, 
+    #let's put it as a first color set in order to assign
     #always the same colors when you need to perform more than one analysis with different tags having different uni.tag
     totale <- uni.tag1 + uni.tag2 + uni.tag3 + uni.tag4 + 50
     #the input$MetaClustNum parameter is in another tab (the Hign dim analysis tag). 
@@ -1605,7 +1612,8 @@ server <- function(input, output, session) {
         validate(need(expr =  (mk_ok), message = messaggio))}})}
       else{
         output$checktxt_loading_meta_marker <- renderText({
-          {messaggio <- paste0("something is wrong with the loaded marker-table.", "You may start downloading meta-table automatically ",         
+          {messaggio <- paste0("something is wrong with the loaded marker-table.", 
+                               "You may start downloading meta-table automatically ",         
                                "generated when you do not provide any table in input. 
                                Try to manipulate that one according to your use and try with this new version")
           validate(need(expr =  (mk_ok), message = messaggio))}})}}
@@ -1644,10 +1652,12 @@ server <- function(input, output, session) {
     marcatori_in_tabella <- mk$marker_description
     n_p <- grep("density",marcatori_in_tabella, value = FALSE, ignore.case = TRUE) 
     if (length(n_p)>0) {marcatori_in_tabella <- marcatori_in_tabella[-n_p]}
-    #this is because I did not check for density before. The density does not provide any description when generated by the spade routine
+    #this is because I did not check for density before. 
+    #The density does not provide any description when generated by the spade routine
     
     check_in <- identical(x = marcatori_in_tabella, y = markers_desc) 
-    validate(need(expr = (check_in), message = "the entered table does not match the marker's description of the entry flowSet")) 
+    validate(need(expr = (check_in), message = "the entered table does not match the marker's 
+                  description of the entry flowSet")) 
     #???to be further studied
     
     totale <- uni.tag1 + uni.tag2 + uni.tag3 + uni.tag4 + 50 + uni.marker
@@ -1659,7 +1669,8 @@ server <- function(input, output, session) {
     color.metaclust <<- colori[1:50] 
     # it was color.metaclust <<- colori[(uni.tag1 + uni.tag2 + uni.tag3 + uni.marker + uni.pheno + 1):length(colori)]
     
-    color.marker <<- colori[(50 + uni.tag1 + uni.tag2 + uni.tag3 + uni.tag4 + 1):(50 + uni.tag1 + uni.tag2 + uni.tag3 + uni.tag4 + uni.marker)]}
+    color.marker <<- colori[(50 + uni.tag1 + uni.tag2 + uni.tag3 + uni.tag4 + 1):
+                              (50 + uni.tag1 + uni.tag2 + uni.tag3 + uni.tag4 + uni.marker)]}
     
     meta.markers(mk)
     output$console_output_meta <- renderPrint("marker's metadata loaded")
@@ -1759,7 +1770,8 @@ server <- function(input, output, session) {
         validate(need(expr =  (ph_ok), message = messaggio))}})}
       else{
         output$checktxt_loading_meta_pheno <- renderText({
-          {messaggio <- paste0("something is wrong with the loaded pheno-table.", "You may start downloading meta-table automatically ",         
+          {messaggio <- paste0("something is wrong with the loaded pheno-table.", 
+                               "You may start downloading meta-table automatically ",         
                                "generated when you do not provide any table in input. 
                                Try to manipulate that one according to your use and try with this new version")
           validate(need(expr =  (ph_ok), message = messaggio))}})}}
@@ -1777,7 +1789,8 @@ server <- function(input, output, session) {
       validate(need(expr = !is.null(pheno.table()), message = "It needs a valid pheno.table"))
       marker_selected <- mk[mk$selected,]$marker_description
       marker_phenotable <- colnames(ph)[-1]
-      validate(need(expr = (setequal(marker_selected,marker_phenotable)), message = "It needs a valid pheno.table")) #to check the markers
+      validate(need(expr = (setequal(marker_selected,marker_phenotable)), 
+                    message = "It needs a valid pheno.table")) #to check the markers
       good_char <- as.vector(as.matrix(ph[,-1]))
       elementi <- length(good_char)
       plus <- length(which(good_char == '+'))
@@ -1818,7 +1831,8 @@ server <- function(input, output, session) {
       names(color.pheno) <<- name.tag
       
       if(uni.pheno>1){
-        output$pheno.color <- renderPlot({barplot(height = v.tag, col=color.pheno, axes = FALSE, space = 0.1, main = "phenotype colors")})}}
+        output$pheno.color <- renderPlot({barplot(height = v.tag, col=color.pheno, axes = FALSE, 
+                                                  space = 0.1, main = "phenotype colors")})}}
       
       output$meta_phenoStatus <- reactive({input$meta_phenoStatus=="show"})
       outputOptions(output, "meta_phenoStatus", suspendWhenHidden = FALSE)
@@ -1929,10 +1943,14 @@ server <- function(input, output, session) {
       else
         {dI.ana_val("To get an MDS plot you need at least 3 samples. Load three '.fcs' files or skip this type of analysis")}
     
-      if (uni.tag1>1) {dI.ana$dia.tag1 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), type = "tag1", selected = mk$selected)}
-      if (uni.tag2>1) {dI.ana$dia.tag2 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), type = "tag2", selected = mk$selected)}
-      if (uni.tag3>1) {dI.ana$dia.tag3 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), type = "tag3", selected = mk$selected)}
-      if (uni.tag4>1) {dI.ana$dia.tag4 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), type = "tag4", selected = mk$selected)}
+      if (uni.tag1>1) {dI.ana$dia.tag1 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), 
+                                                          type = "tag1", selected = mk$selected)}
+      if (uni.tag2>1) {dI.ana$dia.tag2 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), 
+                                                          type = "tag2", selected = mk$selected)}
+      if (uni.tag3>1) {dI.ana$dia.tag3 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), 
+                                                          type = "tag3", selected = mk$selected)}
+      if (uni.tag4>1) {dI.ana$dia.tag4 <- diagnostic_plot(flow_Set = fSmeta(), meta = meta.table(), 
+                                                          type = "tag4", selected = mk$selected)}
      
       if(inherits(x = (dI.ana$MDS.sample_id)[[1]],"plotly")){
       output$MDSsample_id <- renderPlotly({dI.ana$MDS.sample_id[[1]]})
@@ -1953,11 +1971,13 @@ server <- function(input, output, session) {
           result <- dI.ana$MDS.sample_id
           output$checktxt_plotting_mds <- renderText({
             if (!is.null(dI.ana$MDS.sample_id)) 
-              {validate(need(expr =  (inherits(x = (dI.ana$MDS.sample_id)[[1]],"plotly")), message = dI.ana$MDS.sample_id))}})
+              {validate(need(expr = (inherits(x = (dI.ana$MDS.sample_id)[[1]],"plotly")), 
+                             message = dI.ana$MDS.sample_id))}})
           output$checktxt_plotting_mds <- renderText({if (inherits(x = dI.ana_val(),"character"))
             validate(need(expr =  (!(inherits(x = dI.ana_val(),"character"))), message = dI.ana_val()))})}}
     else {
-      dI.ana_val("please load your FCS files, the sample's and the marker's metatables in order to be parsed from cytoChain")
+      dI.ana_val("please load your FCS files, the sample's and the marker's metatables 
+                 in order to be parsed from cytoChain")
       
       output$checktxt_plotting_mds <- renderText({
         if (!is.null(dI.ana_val())){
@@ -2000,7 +2020,8 @@ server <- function(input, output, session) {
     output$cos2var <- renderPlot({dI.PCA.eva$cos2_var})}
 
     else{
-      dI.PCA.eva$pca.res <- "please load your FCS files, the sample's and the marker's metatables in order to be parsed from cytoChain"
+      dI.PCA.eva$pca.res <- "please load your FCS files, the sample's and the marker's metatables 
+      in order to be parsed from cytoChain"
       output$checktxt_runPCAEva <- renderText({
         validate(need(expr =  (!(inherits(x = dI.PCA.eva$pca.res,"character"))), message = dI.PCA.eva$pca.res))})}
   })
@@ -2079,8 +2100,9 @@ server <- function(input, output, session) {
         
       dI.tSNE.eva.init$mapres_init <- map_gen(flow_Set = fS.init, type = "tSNE", selected_markers = mk$selected, 
                                               seed_nr = input$set_seed, limit = FALSE, maxCell = input$mapMax,  
-                                              Rtsne_pca = input$tSNE_PCA, Rtsne_perp = input$perplexity, Rtsne_theta = input$theta, 
-                                              Rtsne_iter = input$tSNEiter, Rtsne_eta = input$tSNEeta)
+                                              Rtsne_pca = input$tSNE_PCA, Rtsne_perp = input$perplexity, 
+                                              Rtsne_theta = input$theta, Rtsne_iter = input$tSNEiter, 
+                                              Rtsne_eta = input$tSNEeta)
     
       if(inherits(x = dI.tSNE.eva.init$mapres_init,"character")){
           dI.tSNE.eva.init$mapres_init <- paste0("map generation function says: ", dI.tSNE.eva.init$mapres_init)}
@@ -2104,7 +2126,8 @@ server <- function(input, output, session) {
       if (!(inherits(x = fS.init,"flowSet"))&&(!(inherits(x = dI(),"flowSet"))))
         {validate(need(expr =  (inherits(x = fS.init,"flowSet")), message = dI.tSNE.eva.init$mapres_init))}
       if (inherits(x = dI.tSNE.eva.init$mapres_init,"character"))
-        {validate(need(expr =  !(inherits(x = dI.tSNE.eva.init$mapres_init,"character")), message = dI.tSNE.eva.init$mapres_init))}})
+        {validate(need(expr =  !(inherits(x = dI.tSNE.eva.init$mapres_init,"character")), 
+                       message = dI.tSNE.eva.init$mapres_init))}})
   })
   
   #################################################################### runfStSNEfinal ----
@@ -2126,9 +2149,9 @@ server <- function(input, output, session) {
         output$tSNEfinal_panelStatus <- reactive({input$tSNEfinal_panelStatus=="show"})
         outputOptions(output, "tSNEfinal_panelStatus", suspendWhenHidden = FALSE)
       
-        dI.tSNE.eva.final$mapres_final <- map_gen(flow_Set = fS.final, type = "tSNE", two_three = FALSE, selected_markers = mk$selected, 
-                                                  seed_nr = input$set_seed, limit = FALSE, maxCell = input$mapMax,  
-                                                  Rtsne_pca = input$tSNE_PCA,
+        dI.tSNE.eva.final$mapres_final <- map_gen(flow_Set = fS.final, type = "tSNE", two_three = FALSE, 
+                                                  selected_markers = mk$selected, seed_nr = input$set_seed, limit = FALSE, 
+                                                  maxCell = input$mapMax, Rtsne_pca = input$tSNE_PCA, 
                                                   Rtsne_perp = input$perplexity, Rtsne_theta = input$theta, 
                                                   Rtsne_iter = input$tSNEiter, Rtsne_eta = input$tSNEeta)
       
@@ -2184,7 +2207,7 @@ server <- function(input, output, session) {
       if (input$tsne_algo == "k_means"){
         resKmeans_init <- kmeans(exprsub, input$NumClust, nstart=10,iter.max = 200, algorithm = "MacQueen")
         #resKmeans_init <- meanShift(queryData = exprsub, algorithm="KDTREE")
-      ### try also kmeans(x = exprsub, centers = input$NumClust, nstart=input$NumClust, iter.max = 200, algorithm = "Hartigan-Wong")
+### try also kmeans(x = exprsub, centers = input$NumClust, nstart=input$NumClust, iter.max = 200, algorithm = "Hartigan-Wong")
         dI.tSNE.K$clusters_init <- resKmeans_init[[1]]} #with kmeans
         #dI.tSNE.K$clusters_init <- resKmeans_init$assignment} #with meanShift
       
@@ -2259,7 +2282,8 @@ server <- function(input, output, session) {
           fF_final <- concatenating_fS(flow_Set = fS.final, stringa = "conc_sample")
         
           fF_final <- add_dim(flow_Frame = fF_final, dim_name = "tSNEx", dim_vect = dI.tSNE_unique.K$tSNEx_final)
-          dI.tSNE_unique.K$fF_final <- add_dim(flow_Frame = fF_final, dim_name = "tSNEy", dim_vect = dI.tSNE_unique.K$tSNEy_final)
+          dI.tSNE_unique.K$fF_final <- add_dim(flow_Frame = fF_final, dim_name = "tSNEy", 
+                                               dim_vect = dI.tSNE_unique.K$tSNEy_final)
         
           print("tSNEx and tSNEy dimensions added")
           output$console_output_meta <- renderPrint("tSNEx and tSNEy dimensions added")
@@ -2293,7 +2317,8 @@ server <- function(input, output, session) {
           output$console_output_meta <- renderPrint("tSNE cluster evaluation plot process ends")
           if (Sys.info()["sysname"] == "Windows") play(x = gong)
     
-          fF_out <- add_dim(flow_Frame = dI.tSNE_unique.K$fF_final, dim_name = "kmeans", dim_vect = dI.tSNE_unique.K$clusters_final)
+          fF_out <- add_dim(flow_Frame = dI.tSNE_unique.K$fF_final, dim_name = "kmeans", 
+                            dim_vect = dI.tSNE_unique.K$clusters_final)
         
           if (inherits(x = dI.clust$mapping,"integer")){
             {fF_out <- add_dim(flow_Frame = fF_out, dim_name = "clustering", dim_vect = dI.clust$mapping)}
@@ -2306,7 +2331,8 @@ server <- function(input, output, session) {
     dI.tSNE_unique.K$fF_final <- fF_out
     output$tSNEkmeans_clust_unique <- renderPlot({
       dI.tSNE_unique.K$tSNE_final})
-    output$tSNEkmeans_clust_unique_info <- renderText({paste0("x=", input$uniqe_plot_click$x, "\ny=", input$unique_plot_click$y)})
+    output$tSNEkmeans_clust_unique_info <- renderText({paste0("x=", input$uniqe_plot_click$x, "\ny=", 
+                                                              input$unique_plot_click$y)})
     
     output$downloadKmeansunique <- downloadHandler(
       filename = function() {
@@ -2318,7 +2344,8 @@ server <- function(input, output, session) {
         tmpdir <- tempdir()
         write.FCS(dI.tSNE_unique.K$fF_final, filename = paste0(tmpdir,"\\","kTsne.fcs"))
         Zip_Files <- list.files(path = tmpdir, pattern = "^kTsne*")
-        #Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) #this is necessary to sort in the correct way the flowFrames in the flowSet
+        #Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) #this is necessary to sort in the correct way 
+        #the flowFrames in the flowSet
         zip::zip(zipfile = file_path, files = Zip_Files, include_directories = FALSE, root = tempdir())
       },
       contentType = "application/zip")  
@@ -2326,7 +2353,8 @@ server <- function(input, output, session) {
   
   ################################################### ________Clustering -----    
 
-  dI.clust<- reactiveValues(mapping = NULL, codes = NULL, mst = NULL, NumCluster = NULL, sil_plot = NULL, sil_summary = NULL)
+  dI.clust<- reactiveValues(mapping = NULL, codes = NULL, mst = NULL, NumCluster = NULL, sil_plot = NULL, 
+                            sil_summary = NULL)
   dI.flow <- reactiveValues(labelI = NULL, meta_clust = NULL, mapping = NULL, labelII = NULL, 
                            pheno_mapsI = NULL, pheno_mapsII = NULL, quantity = NULL, time_step = NULL)
   
@@ -2344,7 +2372,8 @@ server <- function(input, output, session) {
         dI.labelClust$label.res <- NULL #this is to reset the labelling I results
         dI.labelClust$hm_cluster <- NULL #this is to reset the labelling I results
         dI.label(NULL) #this is to reset the labelling II results
-        dI.labelClust$label.res <- NULL; #dI.map_val$showmapcomp <- NULL; #this to try to avoid the re-generation of the tsne map
+        dI.labelClust$label.res <- NULL; #dI.map_val$showmapcomp <- NULL; 
+        #this to try to avoid the re-generation of the tsne map
         dI.label_val$hm_label <- NULL; dI.label_val$hm_label_plus <- NULL
         dI.label_val$hm_pheno <- NULL; dI.label_val$hm_pheno_plus <- NULL
         
@@ -2365,7 +2394,8 @@ server <- function(input, output, session) {
         output$console_output_clust <- renderPrint("start clustering process - waiting...")
        
         if (input$ClustAlgo == "flowSOM"){
-          flowSOM.res <- flowSOM_clust(flow_Set = fSmeta(), selected_markers = meta.markers()$selected, seed = input$set_seed)
+          flowSOM.res <- flowSOM_clust(flow_Set = fSmeta(), selected_markers = meta.markers()$selected, 
+                                       seed = input$set_seed)
           if (inherits(x = flowSOM.res[[1]],"FlowSOM")){
             dI.clust$mapping <- as.integer(flowSOM.res[[2]]$map$mapping[,1]) # vector [flowSet nr. of cell = cluster nr.]
             dI.clust$codes <- flowSOM.res[[2]]$map$codes # matrix [metaclust nr. x selected_markers]
@@ -2375,7 +2405,8 @@ server <- function(input, output, session) {
               dI.clust$mapping <- flowSOM.res}}
       
       if (input$ClustAlgo == "KMeans"){
-        kmeans.res <- kmeans_clust(flow_Set = fSmeta(), selected_markers = meta.markers()$selected, Algo = input$KmeansAlgo,
+        kmeans.res <- kmeans_clust(flow_Set = fSmeta(), selected_markers = meta.markers()$selected, 
+                                   Algo = input$KmeansAlgo,
                                    K = input$k, seed = input$set_seed)
         if (inherits(x = kmeans.res,"list")){
           dI.clust$mapping <- kmeans.res[[1]]
@@ -2427,8 +2458,9 @@ server <- function(input, output, session) {
           else{minkowski = NULL}
           
           clust_color <- color.clust
-          plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = clust_color, distance = input$ClusteringPdistance, 
-                                  power = minkowski, setseed = input$set_seed, type = "clust")
+          plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = clust_color, 
+                                  distance = input$ClusteringPdistance, power = minkowski, 
+                                  setseed = input$set_seed, type = "clust")
           dI.clust$sil_plot <- plot_res[[1]] 
           dI.clust$sil_summary <- plot_res[[2]]
           
@@ -2444,8 +2476,8 @@ server <- function(input, output, session) {
       else {dI.clust$mapping <- "Please enter the meta-marker's related table in the 'Metadata & Assays' workflow"}
     } #if (inherits(x=fSmeta(),"flowSet"))
     else
-    {dI.clust$mapping <- "You have to deal with a flowSet expreriment: please load your '.fcs' files in the pre-Clustering workflow or through the
-    Metadata&Assays workflow"}
+    {dI.clust$mapping <- "You have to deal with a flowSet expreriment: please load your '.fcs' files in the 
+    pre-Clustering workflow or through the Metadata&Assays workflow"}
     
     output$checktxt_clust <- renderText({if (!(inherits(x = dI.clust$mapping,"integer"))) 
       {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), message = dI.clust$mapping))}})
@@ -2471,7 +2503,8 @@ server <- function(input, output, session) {
         flowSOM_plot(mst = dI.clust$mst , markers_df = meta.markers())
         path_to_file <- "./tmpdata"
         Zip_Files <- list.files(path = path_to_file, pattern = "^Plot", full.names = TRUE)
-        Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) #this is necessary to sort in the correct way the flowFrames in the flowSet
+        Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) 
+        #this is necessary to sort in the correct way the flowFrames in the flowSet
         zip(zipfile = "./tmpdata/plotClust.zip", files = Zip_Files)
   
         output$markerPlot <- renderImage({
@@ -2539,8 +2572,8 @@ server <- function(input, output, session) {
         output$sil_summary <- renderTable({dI.clust$sil_summary})
         
         output$downloadPerf_csv <- downloadHandler(filename <- function() {paste("silhouette_clust","csv", sep = ".")},
-                                                   content  <- function(file) {file.copy("./tmpdata/silhouette_clust.csv", file)},
-                                                   contentType = "text/csv" )}
+                                            content  <- function(file) {file.copy("./tmpdata/silhouette_clust.csv", file)},
+                                            contentType = "text/csv" )}
         
       print("visualization process for the clustering data ends")
       output$console_output_clust <- renderPrint("visualization process for the clustering data ends")}
@@ -2576,16 +2609,15 @@ server <- function(input, output, session) {
       print("concatenated sample with clustering data produced")
       output$console_output_clust <- renderPrint("concatenated sample with clustering data produced")
       if (Sys.info()["sysname"] == "Windows") play(x = bell)}
-    
+  
     output$downloadFCSClust <- downloadHandler(
-      
       filename = function() {
         paste("cluster", "zip", sep = ".")
       },
       content = function(file){
         file_path <- file
         tmpdir <- tempdir()
-        
+ 
         write.FCS(dI.clust_save$fFclust, filename = paste0(tmpdir,"\\","cluster.fcs"))
         Zip_Files <- list.files(path = tmpdir, pattern = "^cluster*")
         Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE)
@@ -2606,14 +2638,15 @@ server <- function(input, output, session) {
     if((inherits(x = dI.clust$codes,"matrix"))&&(inherits(x = fSmeta(),"flowSet"))&&(dI.flow$labelI)){
         if (input$signature_finding_method=="Densities"){
           options(warn = 1)
-          dI.labelClust$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, clustId = dI.clust$mapping,
-                                               color_marker = color.marker, tipo="cluster", central = input$HeatMapCentral, 
-                                               min_quantile = input$minQuantile, max_quantile = input$maxQuantile,
-                                               pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold), silent = FALSE)
+          dI.labelClust$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, 
+                                      clustId = dI.clust$mapping, color_marker = color.marker, tipo="cluster", 
+                                      central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                      max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                      neg_threshold = input$neg_threshold), silent = FALSE)
           
           if (inherits(x = dI.labelClust$cs.res,"list")){options(warn = 0)} else errore <- dI.labelClust$cs.res}
       
-        if((inherits(x = dI.clust$mapping,"integer"))&&(input$minQuantile<input$maxQuantile)&&(input$pos_threshold>=input$neg_threshold)) {
+        if((inherits(x = dI.clust$mapping,"integer"))&&(input$pos_threshold>=input$neg_threshold)) {
           print("start visualization process for the clustering heatmap")
           output$console_output_clust <- renderPrint("start visualization process for the clustering data - waiting...")
           output$labelClust_panelStatus <- reactive({input$labelClust_panelStatus=="show"})
@@ -2627,12 +2660,12 @@ server <- function(input, output, session) {
             if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
             label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = mapping, 
                                   phenoquery = ph, central = input$HeatMapCentral, 
-                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
                                   pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
                                   cluster.signature = dI.labelClust$cs.res[[2]])} else 
             {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = mapping, 
                                    phenoquery = ph, central = input$HeatMapCentral, 
-                                   min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                   min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
                                    pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold)}
             dI.labelClust$label.res <- label.res}
         
@@ -2649,25 +2682,28 @@ server <- function(input, output, session) {
                                                    clustering = mapping, selected_markers = meta.markers()$selected, 
                                                    cluster_labelling = dI.labelClust$label.res, 
                                                    pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                   central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                                   central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                   max_quantile = input$maxQuantile, quant = input$no_Quant, 
                                                    pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
                                                    dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                   color_clusters = color_clusters, color_label = color.pheno,
+                                                   color_clusters = color_clusters, color_label = color.pheno, 
                                                    cluster.signature = dI.labelClust$cs.res[[1]])}else
-              {dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), 
-                                                type_HM = "full_label", clustering = mapping, selected_markers = meta.markers()$selected, 
-                                                cluster_labelling = dI.labelClust$label.res, 
-                                                pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                color_clusters = color_clusters, color_label = color.pheno)}}
+              {dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
+                                                   clustering = mapping, selected_markers = meta.markers()$selected, 
+                                                   cluster_labelling = dI.labelClust$label.res, pheno_table = ph, 
+                                                   Nclust = length(dI.labelClust$label.res$new_cluster), 
+                                                   central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                   max_quantile = input$maxQuantile, quant = input$no_Quant, 
+                                                   pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
+                                                   dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                                                   color_clusters = color_clusters, color_label = color.pheno)}}
             else{
               if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
                 dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
                                                             clustering = mapping, selected_markers = meta.markers()$selected, 
                                                             pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                            central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                                            central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                            max_quantile = input$maxQuantile, quant = input$no_Quant,
                                                             pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
                                                             dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
                                                             color_clusters = color_clusters, color_label = color.pheno, 
@@ -2675,24 +2711,23 @@ server <- function(input, output, session) {
                 {dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
                                                             clustering = mapping, selected_markers = meta.markers()$selected, 
                                                             pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                            central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                                            central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                            max_quantile = input$maxQuantile, quant = input$no_Quant,
                                                             pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
                                                             dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
                                                             color_clusters = color_clusters, color_label = color.pheno)}}
           dI.flow$labelI <- FALSE
           output$console_output_clust <- renderPrint("labelling process I ends")
-          print("labelling process I ends")}
+          print("labelling process I ends")} #(input$pos_threshold>=input$neg_threshold))
         if (!(inherits(x = dI.clust$mapping,"integer"))){
           dI.labelClust$label.res <- "Please perform the clustering algorithm: without clustering you cannot perfom this procedure"}
-        if (!(input$minQuantile < input$maxQuantile)){
-          dI.labelClust$label.res <- "Please fix your quantile related setting: it must be minQuantile < input$maxQuantile"}
         if (input$pos_threshold < input$neg_threshold){
           dI.labelClust$label.res <- "Please fix your labelling threshold setting: it must be pos_threshold > neg_threshold"} 
         if (!(inherits(x = dI.clust$mapping,"integer"))){
           dI.labelClust$label.res <- "Please perform the clustering algorithm: without clustering you cannot perfom this procedure"}
         
-      #else{dI.labelClust$label.res <- paste0("Please enter a phenotype table in the 'Metadata & Assays' workflow or skip this and go directly to the ", 
-      #                                    "'Meta-clustering' step")}
+      #else{dI.labelClust$label.res <- paste0("Please enter a phenotype table in the 'Metadata & Assays' workflow or skip this 
+      #and go directly to the ", "'Meta-clustering' step")}
       dI.flow$labelI <- FALSE
       if (Sys.info()["sysname"] == "Windows") play(x = bell)}
     
@@ -2726,7 +2761,8 @@ server <- function(input, output, session) {
       if(inherits(x = dI.labelClust$hm_cluster,'list')){
         path_to_file <- "./tmpdata"
         Zip_Files <- list.files(path = path_to_file, pattern = "^HM_", full.names = TRUE)
-        Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) #this is necessary to sort in the correct way the flowFrames in the flowSet
+        Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE) 
+        #this is necessary to sort in the correct way the flowFrames in the flowSet
         zip(zipfile = "./tmpdata/plotClust.zip", files = Zip_Files)
         
         cdata <- session$clientData
@@ -2771,6 +2807,21 @@ server <- function(input, output, session) {
           },
           contentType = "text/csv"
         )
+        
+        output$downloadClustAll <- downloadHandler(
+          filename = function() {
+            paste("Analysis_material", "zip", sep=".")
+          },
+          
+          content <- function(file) {
+            file_path <- file
+            
+            Zip_Files <- list.files(path = data_dir)
+            Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE)
+            zip::zip(zipfile = file_path, files = Zip_Files, include_directories = TRUE, root = data_dir)
+          },
+          contentType = "application/zip"
+        )
       } 
     }
     output$checktxt_plot_labelClust <- renderText({
@@ -2798,7 +2849,8 @@ server <- function(input, output, session) {
                         pItem = 1.0, clusterAlg = input$MetaClustCriteria, distance = input$MetaClustDist, 
                         seed = input$set_seed, savedir = "./tmpdata", save = TRUE)
           dI.metaClust(mc.res) 
-        #Notice, depending of the dataset, the meta_clustering can produce a number of meta_clusters which is less than input$MetaClustNum 
+        #Notice, depending of the dataset, the meta_clustering can produce a number of meta_clusters 
+        # which is less than input$MetaClustNum 
         
         if(inherits(x = dI.metaClust(),"list")) {
           output$metaClust_panelStatus <- reactive({input$metaClust_panelStatus=="show"})
@@ -2808,51 +2860,50 @@ server <- function(input, output, session) {
           cell_clustering <- code_clustering[dI.clust$mapping] #[1:Number of events]
           
           if (input$signature_finding_method=="Densities"){
-            dI.metaClust_val$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, clustId = cell_clustering,
-                                                        color_marker = color.marker, tipo ="meta", central = input$HeatMapCentral,
-                                                        min_quantile = input$minQuantile, max_quantile = input$maxQuantile,
-                                                        pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold), silent = FALSE)
+            dI.metaClust_val$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, 
+                                                  clustId = cell_clustering, color_marker = color.marker, tipo ="meta", 
+                                                  central = input$HeatMapCentral, min_quantile = input$minQuantile, quant = input$no_Quant,
+                                                  max_quantile = input$maxQuantile, pos_threshold = input$pos_threshold, 
+                                                  neg_threshold = input$neg_threshold), silent = FALSE)
           if (inherits(x = dI.metaClust_val$cs.res,"list")){options(warn = 0)} else errore <- dI.metaClust_val$cs.res}
         
           if (is.data.frame(dI.labelClust$label.res)){
             if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
-            dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering, 
-                                                         cluster_labelling = NULL, pheno_table = ph, Nclust = input$MetaClustNum, 
-                                                         selected_markers = meta.markers()$selected, 
-                                                         central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                                         max_quantile = input$maxQuantile, 
-                                                         pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                         dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                         color_clusters = color.metaclust, cluster.signature = dI.metaClust_val$cs.res[[1]])}
+            dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                                                clustering = cell_clustering, cluster_labelling = NULL, pheno_table = ph, 
+                                                Nclust = input$MetaClustNum, selected_markers = meta.markers()$selected, 
+                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                                neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                                hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust, 
+                                                cluster.signature = dI.metaClust_val$cs.res[[1]])}
             else{
-                 dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering, 
-                                                              cluster_labelling = NULL, pheno_table = ph, Nclust = input$MetaClustNum, 
-                                                              selected_markers = meta.markers()$selected, 
-                                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                                              max_quantile = input$maxQuantile, 
-                                                              pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                              color_clusters = color.metaclust)}
+                 dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                                                clustering = cell_clustering, cluster_labelling = NULL, pheno_table = ph, 
+                                                Nclust = input$MetaClustNum, selected_markers = meta.markers()$selected, 
+                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                                neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                                hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust)}
             } 
           else 
           {if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
-            dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering,
-                                                                    cluster_labelling = NULL, pheno_table = NULL, Nclust = input$MetaClustNum, 
-                                                                    selected_markers = meta.markers()$selected,
-                                                                    central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                                                    max_quantile = input$maxQuantile,
-                                                                    pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                                    dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                                    color_clusters = color.metaclust, cluster.signature = dI.metaClust_val$cs.res[[1]])}
+            dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                                                clustering = cell_clustering, cluster_labelling = NULL, pheno_table = NULL, 
+                                                Nclust = input$MetaClustNum, selected_markers = meta.markers()$selected,
+                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                                neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                                hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust, 
+                                                cluster.signature = dI.metaClust_val$cs.res[[1]])}
             else{
-              dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering,
-                                                                        cluster_labelling = NULL, pheno_table = NULL, Nclust = input$MetaClustNum, 
-                                                                        selected_markers = meta.markers()$selected,
-                                                                        central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                                                        max_quantile = input$maxQuantile,
-                                                                        pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                                        dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                                        color_clusters = color.metaclust)}}
+              dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                                                clustering = cell_clustering, cluster_labelling = NULL, pheno_table = NULL, 
+                                                Nclust = input$MetaClustNum, selected_markers = meta.markers()$selected,
+                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                                max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                                neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                                hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust)}}
             if (input$clusteringPerf == TRUE){
               print("start meta-clusters evaluation process")
             
@@ -2863,8 +2914,9 @@ server <- function(input, output, session) {
             else{minkowski = NULL}
             
             clust_color <- color.metaclust
-            plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = color.metaclust, distance = input$ClusteringPdistance, 
-                                    power = minkowski, setseed = input$set_seed, type = "meta")
+            plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = color.metaclust, 
+                                    distance = input$ClusteringPdistance, power = minkowski, 
+                                    setseed = input$set_seed, type = "meta")
             dI.metaClust_val$sil_plot <- plot_res[[1]] 
             dI.metaClust_val$sil_summary <- plot_res[[2]]
 
@@ -2889,7 +2941,8 @@ server <- function(input, output, session) {
         if(!is.null(dI.clust$NumCluster)){
           if(!(dI.clust$NumCluster>input$MetaClustNum))
           {(dI.metaClust_val$hm_cluster <- 
-                "The number of meta-clusters must be lower than the numbers of clusters: Did you check the related paramter's setting?")}}
+          "The number of meta-clusters must be lower than the numbers of clusters: 
+          Did you check the related paramter's setting?")}}
       }
           
     
@@ -2905,7 +2958,8 @@ server <- function(input, output, session) {
           validate(need(expr =  (dI.clust$NumCluster>input$MetaClustNum), 
                         message = "The number of meta-clusters must be less than the number of clusters"))}}
         if (!(inherits(x = dI.metaClust(),"list"))){
-              validate(need(expr =  (inherits(x = dI.metaClust(),"list")), message = "Something went wrong with the meta-clustering. Try again..."))}
+              validate(need(expr =  (inherits(x = dI.metaClust(),"list")), message = 
+                              "Something went wrong with the meta-clustering. Try again..."))}
         if (!(inherits(x = dI.clust$mapping,"integer"))){
           validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), message = mc.res))}
       })
@@ -3001,13 +3055,28 @@ server <- function(input, output, session) {
           contentType = "application/zip"
         )
         
+        output$downloadMetaAll <- downloadHandler(
+          filename = function() {
+            paste("Analysis_material", "zip", sep=".")
+          },
+          
+          content <- function(file) {
+            file_path <- file
+            
+            Zip_Files <- list.files(path = data_dir)
+            Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE)
+            zip::zip(zipfile = file_path, files = Zip_Files, include_directories = TRUE, root = data_dir)
+          },
+          contentType = "application/zip"
+        )
+        
         if (input$clusteringPerf == TRUE){
           output$meta_sil_plot <- renderPlotly({dI.metaClust_val$sil_plot})
           output$meta_sil_summary <- renderTable({dI.metaClust_val$sil_summary})
           
           output$downloadMetaPerf_csv <- downloadHandler(filename <- function() {paste("meta_silhouette","csv", sep = ".")},
-                                                     content  <- function(file) {file.copy("./tmpdata/meta_silhouette.csv", file)},
-                                                     contentType = "text/csv" )}}}
+                                            content  <- function(file) {file.copy("./tmpdata/meta_silhouette.csv", file)},
+                                            contentType = "text/csv" )}}}
     
     output$checktxt_plotMeta <- renderText({
       if (!is.list(dI.metaClust_val$hm_cluster))
@@ -3023,7 +3092,8 @@ server <- function(input, output, session) {
   observeEvent(eventExpr = input$saveMetaClust , {
     
     validate(need(expr = (inherits(x = fSmeta(),"flowSet")), message = "It needs valid FCS files"))
-    if((inherits(x = dI.metaClust(),"list"))&&(inherits(x = fSmeta(),"flowSet"))&&(inherits(x = dI.clust$mapping,"integer"))){
+    if((inherits(x = dI.metaClust(),"list"))&&(inherits(x = fSmeta(),"flowSet"))&&
+       (inherits(x = dI.clust$mapping,"integer"))){
       print("producing concatenated sample with the meta-clustering data")
       output$console_output_clust <- renderPrint("producing concatenated sample with the meta-clustering data - waiting...")
       output$saveMetaClust_panelStatus <- reactive({input$saveMetaClust_panelStatus=="show"})
@@ -3045,7 +3115,8 @@ server <- function(input, output, session) {
         {fF <- concatenating_fS(flow_Set = fSmeta(), stringa = "conc_meta_sample")}
   
       dI.metaclust_save$fFclust <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)
-      dI.metaclust_save$fFclust <- add_dim(flow_Frame = dI.metaclust_save$fFclust, dim_name = "meta_clusterId", dim_vect = cell_clustering)
+      dI.metaclust_save$fFclust <- add_dim(flow_Frame = dI.metaclust_save$fFclust, dim_name = "meta_clusterId", 
+                                           dim_vect = cell_clustering)
       print("concatenated sample with meta-clustering data produced")
       output$console_output_clust <- renderPrint("concatenated sample with meta-clustering data produced")
       if (Sys.info()["sysname"] == "Windows") play(x = bell)
@@ -3074,7 +3145,8 @@ server <- function(input, output, session) {
       if (!(inherits(x = dI.metaClust(),"list")))
         {validate(need(expr =  (inherits(x = dI.metaClust(),"list")), message = "please perform metaclust before"))}
       if (!(inherits(x = dI.clust$mapping,"integer")))
-        {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), message = "you should have performed at least clustering first"))}})
+        {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), 
+                       message = "you should have performed at least clustering first"))}})
     
   })
   
@@ -3094,13 +3166,15 @@ server <- function(input, output, session) {
         {mapres <- dI.tSNE.eva.final$mapres_final}
       else
         {mapres <- map_gen(flow_Set = fSmeta(), type = input$mapType, two_three = input$two_three, 
-                        selected_markers = mk$selected, seed_nr = input$set_seed, limit = input$map_limit, maxCell = input$mapMax,  
+                        selected_markers = mk$selected, seed_nr = input$set_seed, 
+                        limit = input$map_limit, maxCell = input$mapMax,  
                         #tSNE parameters
                         Rtsne_pca = input$tSNE_PCA, Rtsne_perp = input$perplexity, Rtsne_theta = input$theta,
                         Rtsne_iter = input$tSNEiter, Rtsne_eta = input$tSNEeta,
                         #UMAP paramters
                         UMAP.n_neighbors = input$UMAP.n_neighbors, UMAP.metric = input$UMAP.metric, 
-                        UMAP.min_dist = input$UMAP.min_dist, UMAP.spread = input$UMAP.spread, UMAP.random_state = input$set_seed)}
+                        UMAP.min_dist = input$UMAP.min_dist, UMAP.spread = input$UMAP.spread, 
+                        UMAP.random_state = input$set_seed)}
       dI.map(mapres)
       
       if(length(dI.map())==3){
@@ -3143,15 +3217,19 @@ server <- function(input, output, session) {
         cell_clustering <- as.integer(code_clustering[dI.clust$mapping])
         metaClustNum <- input$MetaClustNum
         color_metaclust <- dI.metaClust_val$hm_cluster$color_clusters
-        showmap <- map_plot_comp(map_df = dI.map()[[1]], type = input$mapType, two_three = input$two_three, map_inds = dI.map()[[2]],
-                                 map_reduced = dI.map()[[3]], metadata = mt, clust = dI.clust$mapping, metaclust = meta_clust,
-                                 NMC = metaClustNum, color_clusters = color_metaclust)
+        showmap <- map_plot_comp(map_df = dI.map()[[1]], type = input$mapType, two_three = input$two_three, 
+                                 map_inds = dI.map()[[2]], map_reduced = dI.map()[[3]], metadata = mt, 
+                                 clust = dI.clust$mapping, metaclust = meta_clust, NMC = metaClustNum, 
+                                 color_clusters = color_metaclust)
         fF <- concatenating_fS(flow_Set = fSmeta(), stringa = "conc_meta_sample")
         nomi <- colnames(exprs(fF))
-        if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
-        if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}
+        if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", 
+                                                                        dim_vect = dI.clust$mapping)}
+        if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", 
+                                                                             dim_vect = cell_clustering)}
         
-        jt <- join_tag(frame = fF, meta = mt, type = "meta", tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)} 
+        jt <- join_tag(frame = fF, meta = mt, type = "meta", 
+                       tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)} 
       else{
         #if (is.data.frame(dI.labelClust$label.res))
         if (is.list(dI.labelClust$hm_cluster))
@@ -3159,13 +3237,16 @@ server <- function(input, output, session) {
         metaClustNum <- length(dI.labelClust$label.res$numeric)
         
         color_metaclust <- dI.labelClust$hm_cluster$color_clusters
-        showmap <- map_plot_comp(map_df = dI.map()[[1]], type = input$mapType, two_three = input$two_three, map_inds = dI.map()[[2]],
+        showmap <- map_plot_comp(map_df = dI.map()[[1]], type = input$mapType, two_three = input$two_three, 
+                                 map_inds = dI.map()[[2]],
                                  map_reduced = dI.map()[[3]], metadata = mt, clust = dI.clust$mapping, 
                                  NMC = metaClustNum, color_clusters = color_metaclust)
         fF <- concatenating_fS(flow_Set = fSmeta(), stringa = "conc_meta_sample")
         nomi <- colnames(exprs(fF))
-        if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}}
-        jt <- join_tag(frame = fF, meta = mt, type = "clust", tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)}
+        if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", 
+                                                                        dim_vect = dI.clust$mapping)}}
+        jt <- join_tag(frame = fF, meta = mt, type = "clust", 
+                       tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)}
       
       output$runMapShow_panelStatus <- reactive({input$runMapShow_panelStatus=="show"})
       outputOptions(output, "runMapShow_panelStatus", suspendWhenHidden = FALSE)
@@ -3178,66 +3259,79 @@ server <- function(input, output, session) {
       if (inherits(x = jt,"list")){
         dI.map_val$jt <- jt[[1]][[1]]
         output$showJtSample <- renderPlot({dI.map_val$jt})
-        if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta <- jt[[2]][[1]]; output$showJtMetaSample <- renderPlot({dI.map_val$jt_meta})}
+        if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta <- jt[[2]][[1]]; 
+        output$showJtMetaSample <- renderPlot({dI.map_val$jt_meta})}
         if (uni.tag1 > 1){
           output$conditionJt_tag1 <- reactive({input$conditionJt_tag1=="show"})
           outputOptions(output, "conditionJt_tag1", suspendWhenHidden = FALSE)
           dI.map_val$jt1 <- jt[[1]][[2]]
           output$showJt1_Sample <- renderPlot({dI.map_val$jt1})
-          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_1 <- jt[[2]][[2]]; output$showJt1_MetaSample <- renderPlot({dI.map_val$jt_meta_1})}}
+          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_1 <- jt[[2]][[2]]; 
+          output$showJt1_MetaSample <- renderPlot({dI.map_val$jt_meta_1})}}
         if (uni.tag2 > 1){
           output$conditionJt_tag2 <- reactive({input$conditionJt_tag2=="show"})
           outputOptions(output, "conditionJt_tag2", suspendWhenHidden = FALSE)
           dI.map_val$jt2 <- jt[[1]][[3]]
           output$showJt2_Sample <- renderPlot({dI.map_val$jt2})
-          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_2 <- jt[[2]][[3]]; output$showJt2_MetaSample <- renderPlot({dI.map_val$jt_meta_2})}}
+          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_2 <- jt[[2]][[3]]; 
+          output$showJt2_MetaSample <- renderPlot({dI.map_val$jt_meta_2})}}
         if (uni.tag3 > 1){
           output$conditionJt_tag3 <- reactive({input$conditionJt_tag3=="show"})
           outputOptions(output, "conditionJt_tag3", suspendWhenHidden = FALSE)
           dI.map_val$jt3 <- jt[[1]][[4]]
           output$showJt3_Sample <- renderPlot({dI.map_val$jt3})
-          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_3 <- jt[[2]][[4]]; output$showJt3_MetaSample <- renderPlot({dI.map_val$jt_meta_3})}}
+          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_3 <- jt[[2]][[4]]; 
+          output$showJt3_MetaSample <- renderPlot({dI.map_val$jt_meta_3})}}
         if (uni.tag4 > 1){
           output$conditionJt_tag4 <- reactive({input$conditionJt_tag4=="show"})
           outputOptions(output, "conditionJt_tag4", suspendWhenHidden = FALSE)
           dI.map_val$jt4 <- jt[[1]][[5]]
           output$showJt4_Sample <- renderPlot({dI.map_val$jt4})
-          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_4 <- jt[[2]][[5]]; output$showJt4_MetaSample <- renderPlot({dI.map_val$jt_meta_4})}}
+          if(inherits(x = dI.metaClust(),"list")){dI.map_val$jt_meta_4 <- jt[[2]][[5]]; 
+          output$showJt4_MetaSample <- renderPlot({dI.map_val$jt_meta_4})}}
         
         print("quantity visualization process ends")
         output$console_output_clust <- renderPrint("quantity plot visualization process ends")
         
         output$downloadJtSample_csv <- downloadHandler(filename = function() {paste0("clusterId_", "sample",".csv")},
-                                                          content <- function(file) {file.copy("clusterId_sample.csv", file)}, contentType = "text/csv")
+                          content <- function(file) {file.copy("clusterId_sample.csv", file)}, contentType = "text/csv")
         if(inherits(x = dI.metaClust(),"list")){
           output$downloadJtMetaSample_csv <- downloadHandler(filename = function() {paste0("meta_clasterId_", "sample",".csv")},
-                                                         content <- function(file) {file.copy("meta_clusterId_sample.csv", file)}, contentType = "text/csv")}
+                          content <- function(file) {file.copy("meta_clusterId_sample.csv", file)}, contentType = "text/csv")}
         
         if (uni.tag1 > 1){
           output$downloadSampleTag1_csv <- downloadHandler(filename = function() {paste0("clusterId_", nomi_tag[1],".csv")},
-                                                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, contentType = "text/csv")
+                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, 
+                          contentType = "text/csv")
           if(inherits(x = dI.metaClust(),"list")){
             output$downloadSampleTag1_csv <- downloadHandler(filename = function() {paste0("meta_clusterId_", nomi_tag[1],".csv")},
-                                                             content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[1],".csv"), file)}, contentType = "text/csv")}}
+                          content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[1],".csv"), file)}, 
+                          contentType = "text/csv")}}
         
         if (uni.tag2 > 1){
           output$downloadSampleTag2_csv <- downloadHandler(filename = function() {paste0("clusterId_", nomi_tag[2],".csv")},
-                                                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, contentType = "text/csv")
+                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, 
+                          contentType = "text/csv")
           if(inherits(x = dI.metaClust(),"list")){
             output$downloadSampleTag1_csv <- downloadHandler(filename = function() {paste0("meta_clusterId_", nomi_tag[2],".csv")},
-                                                             content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[2],".csv"), file)}, contentType = "text/csv")}}
+                          content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[2],".csv"), file)}, 
+                          contentType = "text/csv")}}
         if (uni.tag3 > 1){
           output$downloadSampleTag3_csv <- downloadHandler(filename = function() {paste0("clusterId_", nomi_tag[3],".csv")},
-                                                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, contentType = "text/csv")
+                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, 
+                          contentType = "text/csv")
           if(inherits(x = dI.metaClust(),"list")){
             output$downloadSampleTag1_csv <- downloadHandler(filename = function() {paste0("meta_clusterId_", nomi_tag[3],".csv")},
-                                                             content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[3],".csv"), file)}, contentType = "text/csv")}}
+                          content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[3],".csv"), file)}, 
+                          contentType = "text/csv")}}
         if (uni.tag4 > 1){
           output$downloadSampleTag4_csv <- downloadHandler(filename = function() {paste0("clusterId_", nomi_tag[4],".csv")},
-                                                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, contentType = "text/csv")}
+                          content <- function(file) {file.copy(paste0("./tmpdata/clusterId_",nomi_tag[1],".csv"), file)}, 
+                          contentType = "text/csv")}
           if(inherits(x = dI.metaClust(),"list")){
             output$downloadSampleTag1_csv <- downloadHandler(filename = function() {paste0("meta_clusterId_", nomi_tag[4],".csv")},
-                                                           content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[4],".csv"), file)}, contentType = "text/csv")}}
+                          content <- function(file) {file.copy(paste0("./tmpdata/meta_clusterId_",nomi_tag[4],".csv"), file)}, 
+                          contentType = "text/csv")}}
       
       output$console_output_clust <- renderPrint("map visualization ends")
       
@@ -3293,19 +3387,22 @@ server <- function(input, output, session) {
         
         #dI.map_save$fFmap <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)
         nomi <- colnames(exprs(fF))
-        if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
+        if (!any(grepl("clusterId", nomi, fixed = TRUE))){
+          fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
         
         if (inherits(x = dI.metaClust(),"list")){
           code_clustering <- dI.metaClust()[[input$MetaClustNum]]$consensusClass 
           cell_clustering <- as.integer(code_clustering[dI.clust$mapping])
-          if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}}
+          if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){
+            fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}}
         
         meta <- mt
         nomi_tag <- colnames(meta)
         nomi_tag <- nomi_tag[-(1:2)]
         for (i in 1:4){meta[,i+2] <- (as.numeric(factor(meta[,i+2])))}
           if ((inherits(x = dI.metaClust(),"list"))&&(!any(grepl("meta_clusterId", nomi, fixed = TRUE)))){
-            df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId", "meta_clusterId")])} else {df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId")])}
+            df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId", "meta_clusterId")])} else {
+              df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId")])}
           
           meta$SampleID <- as.numeric(1:nrow(meta))
           rj <- right_join(meta,df)
@@ -3314,7 +3411,8 @@ server <- function(input, output, session) {
           
           rj$SampleID <- factor(rj$SampleID)
           rj$clusterId <- factor(rj$clusterId)
-          if ((inherits(x = dI.metaClust(),"list"))&&(!any(grepl("meta_clusterId", nomi, fixed = TRUE)))){rj$meta_clusterId <- factor(rj$meta_clusterId)}
+          if ((inherits(x = dI.metaClust(),"list"))&&(!any(grepl("meta_clusterId", nomi, fixed = TRUE)))){
+            rj$meta_clusterId <- factor(rj$meta_clusterId)}
       
           if (uni.tag1 > 1){
             tag <-  nomi_tag[1]
@@ -3368,9 +3466,11 @@ server <- function(input, output, session) {
       if (!(inherits(x = dI.metaClust(),"list")))
         {validate(need(expr =  (inherits(x = dI.metaClust(),"list")), message = "please perform metaclust before"))}
       if (!(inherits(dI.clust$mapping)=="integer"))
-        {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), message = "you should have performed at least clustering first"))}
+      {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), 
+                       message = "you should have performed at least clustering first"))}
       if (!(inherits(x = dI.map(),"list")))
-        {validate(need(expr =  (inherits(x = dI.map(),"list")), message = "you should have performed the mapping first"))}})
+        {validate(need(expr =  (inherits(x = dI.map(),"list")), 
+                       message = "you should have performed the mapping first"))}})
     
   })
   
@@ -3399,13 +3499,13 @@ server <- function(input, output, session) {
         
         if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
           label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
-                                phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile,  max_quantile = input$maxQuantile, 
-                                pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                cluster_signature = dI.metaClust_val$cs.res[[2]])} else
-          {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
-                                 phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                 max_quantile = input$maxQuantile, pos_threshold = input$pos_threshold, 
-                                 neg_threshold = input$neg_threshold)}
+                                phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile,  
+                                max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                neg_threshold = input$neg_threshold, cluster_signature = dI.metaClust_val$cs.res[[2]])} 
+        else {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
+                                phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                neg_threshold = input$neg_threshold)}
 
         dI.label(label.res)
         print("labelling process II ends")
@@ -3413,20 +3513,22 @@ server <- function(input, output, session) {
         if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
         dI.label_val$hm_label <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "label", 
                                           clustering = cell_clustering, cluster_labelling = dI.label(), 
-                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                          pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                          dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, 
+                                          pheno_table = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                          max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                          neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                          hclust_method = input$HeatmapHCCriteria, 
                                           color_clusters = color.metaclust, color_label = color_label, 
                                           cluster.signature = dI.metaClust_val$cs.res[[1]])}
         else{
           dI.label_val$hm_label <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "label", 
                                           clustering = cell_clustering, cluster_labelling = dI.label(), 
                                           Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                          pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                          dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                          color_clusters = color.metaclust, color_label = color_label)} 
+                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                          max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                          neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                          hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust, 
+                                          color_label = color_label)} 
         
         mm <- match(cell_clustering, dI.label()$original_cluster)
         cell_clustering2 <- dI.label()$new_cluster[mm]
@@ -3435,20 +3537,21 @@ server <- function(input, output, session) {
         if ((nlevels(factor(cell_clustering2))) > 1){
           if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
           dI.label_val$hm_pheno <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                                            clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                                            Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                                            central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                            pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                            dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                            color_clusters = color_label, cluster_labelling = dI.metaClust_val$cs.res[[1]])}
+                                          clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                          max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                          neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                          hclust_method = input$HeatmapHCCriteria, color_clusters = color_label, 
+                                          cluster_labelling = dI.metaClust_val$cs.res[[1]])}
           else{
             dI.label_val$hm_pheno <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                                              clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                                              Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                              pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                              color_clusters = color_label)}}
+                                          clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                          max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                          neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                          hclust_method = input$HeatmapHCCriteria, color_clusters = color_label)}}
         
         else{dI.label_val$hm_pheno <- "The second plot cannot be built: there must be at least two different labelled phenotypes"}}
       
@@ -3463,31 +3566,30 @@ server <- function(input, output, session) {
         color_clusters <- dI.labelClust$hm_cluster$color_clusters
         if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
         dI.label_val$hm_label_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label_plus", 
-                                                      clustering = cell_clustering, selected_markers = meta.markers()$selected, 
-                                                      cluster_labelling = label.res, 
-                                                      pheno_table = ph, Nclust = metaClustNum, 
-                                                      central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                      pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                      dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                      color_clusters = color_clusters, color_label = color_label, 
-                                                      cluster.signature = dI.labelClust$cs.res[[1]])}
+                                          clustering = cell_clustering, selected_markers = meta.markers()$selected, 
+                                          cluster_labelling = label.res, pheno_table = ph, Nclust = metaClustNum, 
+                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                          max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                          neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                          hclust_method = input$HeatmapHCCriteria, color_clusters = color_clusters, 
+                                          color_label = color_label, cluster.signature = dI.labelClust$cs.res[[1]])}
         else{dI.label_val$hm_label_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label_plus", 
-                                                                  clustering = cell_clustering, selected_markers = meta.markers()$selected, 
-                                                                  cluster_labelling = label.res, 
-                                                                  pheno_table = ph, Nclust = metaClustNum, 
-                                                                  central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                                  pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                                  dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                                  color_clusters = color_clusters, color_label = color_label)}
+                                          clustering = cell_clustering, selected_markers = meta.markers()$selected, 
+                                          cluster_labelling = label.res, pheno_table = ph, Nclust = metaClustNum, 
+                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                          max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                          neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                          hclust_method = input$HeatmapHCCriteria, color_clusters = color_clusters, 
+                                          color_label = color_label)}
         
         if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities"))
           {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
-                                  phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                  pos_threshold =input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                  cluster_signature = dI.labelClust$cs.res[[1]])}else{
+                                  phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                  max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold =input$pos_threshold, 
+                                  neg_threshold = input$neg_threshold, cluster_signature = dI.labelClust$cs.res[[1]])}else{
             label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
                                       phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                      max_quantile = input$maxQuantile, pos_threshold = input$pos_threshold, 
+                                      max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
                                       neg_threshold = input$neg_threshold)}
         dI.label(label.res)
         mm <- match(cell_clustering, dI.label()$original_cluster)
@@ -3497,21 +3599,21 @@ server <- function(input, output, session) {
         if ((nlevels(factor(cell_clustering2))) > 1){
           if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
           dI.label_val$hm_pheno_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                                          clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                          pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                          dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                          color_clusters = color_label, cluster_labelling = dI.clust_val$cs.res[[1]])}
+                                   clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                                   Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                                   central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                   max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                   neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                   hclust_method = input$HeatmapHCCriteria, color_clusters = color_label, 
+                                   cluster_labelling = dI.clust_val$cs.res[[1]])}
           else{
             dI.label_val$hm_pheno_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                                          clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                          pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                          dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                          color_clusters = color_label)}}
-        
+                                   clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                                   Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                                   central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                   max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                   neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                   hclust_method = input$HeatmapHCCriteria, color_clusters = color_label)}}
         else{dI.label_val$hm_pheno_plus <- "The second plot cannot be built: there must be at least two different labelled phenotypes"}}
     
     print("labelling process ends")
@@ -3520,7 +3622,8 @@ server <- function(input, output, session) {
       if (!(inherits(x = fSmeta(),"flowSet")))
         {dI.label("You have not loaded any flowSet")}
       if (!(nrow(ph)>0))
-        {dI.label("You cannot perform this step without setting the phenotype definition: edit and load the table in 'Metadata & Assays' workflow")}
+      {dI.label("You cannot perform this step without setting the phenotype definition: 
+                  edit and load the table in 'Metadata & Assays' workflow")}
       if(!(inherits(x = dI.clust$mapping,"integer")))
         {dI.label("You should cluster your flowSet first...")}
       if(!is.data.frame(dI.labelClust$label.res))
@@ -3597,7 +3700,8 @@ server <- function(input, output, session) {
         output$metaHeatmap_labelPlus <- renderImage({
           outfile <- "./tmpdata/HM_full_label_plus.png"
           list(src = outfile, contentType = 'image/png', alt = "label heatmap",
-               width = cdata$output_metaHeatmap_labelPlus_width, height = cdata$output_metaHeatmap_labelPlus_height)}, deleteFile = F)
+               width = cdata$output_metaHeatmap_labelPlus_width, height = cdata$output_metaHeatmap_labelPlus_height)}, 
+          deleteFile = F)
         
         output$downloadLabel_csvPlus <- downloadHandler(
           filename = function() {paste("HM_full_label_plus","csv", sep = ".")},
@@ -3609,7 +3713,8 @@ server <- function(input, output, session) {
         output$metaHeatmap_phenoPlus <- renderImage({
           outfile <- "./tmpdata/HM_pheno.png"
           list(src = outfile, contentType = 'image/png', alt = "phenocluster heatmap",
-               width = cdata$output_metaHeatmap_phenoPlus_width, height = cdata$output_metaHeatmap_phenoPlus_height)}, deleteFile = F)
+               width = cdata$output_metaHeatmap_phenoPlus_width, height = cdata$output_metaHeatmap_phenoPlus_height)}, 
+          deleteFile = F)
         
         output$downloadPheno_csvPlus <- downloadHandler(
           filename = function() {paste("HM_pheno","csv", sep = ".")},
@@ -3654,7 +3759,8 @@ server <- function(input, output, session) {
     showMaps <- "Recall to perform the analysis starting from clustering first and then the rest of the desidered workflow"
     clean_graph()
     
-    if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&(inherits(x = dI.map(),"list"))&&(dI.flow$pheno_mapsI))
+    if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&(inherits(x = dI.map(),"list"))&&
+       (dI.flow$pheno_mapsI))
     { 
       #three cases:
       #1) Clustering + Metaclust dI.clust()&&dI.metaClust()
@@ -3680,7 +3786,8 @@ server <- function(input, output, session) {
                                    m_clustering = cell_clustering , map_res = dI.map()[[1]], map_cell = map_cell, 
                                    selected_markers = mk$selected, metadata = mt, color_clusters = color_pheno)}
         
-        if((is.data.frame(dI.labelClust$label.res))&&(!(inherits(x = dI.metaClust(),"list")))&&(inherits(x = fSmeta(),"flowSet"))&&(dI.flow$labelII)){ #case 2
+        if((is.data.frame(dI.labelClust$label.res))&&(!(inherits(x = dI.metaClust(),"list")))&&
+           (inherits(x = fSmeta(),"flowSet"))&&(dI.flow$labelII)){ #case 2
             # case 2)
             
             cell_clustering <- dI.clust$mapping 
@@ -3751,7 +3858,8 @@ server <- function(input, output, session) {
   observeEvent(eventExpr = input$runLabelPlot_pp, {
     clean_graph()
     
-    if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&(inherits(x = dI.map(),"list"))&&(dI.flow$pheno_mapsII)){
+    if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&(inherits(x = dI.map(),"list"))&&
+       (dI.flow$pheno_mapsII)){
       if((inherits(x = dI.map(),"list"))&&(inherits(x = dI.clust$mapping,"integer"))) {
     
         print("start labelled_++ map visualization")
@@ -3786,8 +3894,9 @@ server <- function(input, output, session) {
   
   #################################################_____Quantity plots  -------
   
-  dI.quant_val <- reactiveValues(bar_plot_sample = NULL, bar_plot_tag1 = NULL, bar_plot_tag2 = NULL, bar_plot_tag3 = NULL, bar_plot_tag4 = NULL, 
-                                 dodge_plot_sample = NULL, dodge_plot_tag1 = NULL, dodge_plot_tag2 = NULL, dodge_plot_tag3 = NULL, dodge_plot_tag4 = NULL, 
+  dI.quant_val <- reactiveValues(bar_plot_sample = NULL, bar_plot_tag1 = NULL, bar_plot_tag2 = NULL, bar_plot_tag3 = NULL, 
+                                 bar_plot_tag4 = NULL, dodge_plot_sample = NULL, dodge_plot_tag1 = NULL, 
+                                 dodge_plot_tag2 = NULL, dodge_plot_tag3 = NULL, dodge_plot_tag4 = NULL, 
                                  med_expr_tag1 = NULL, med_expr_tag2 = NULL, med_expr_tag3 = NULL, med_expr_tag4 = NULL)
   
   observeEvent(eventExpr = input$runQuantPlot, {
@@ -3817,12 +3926,14 @@ server <- function(input, output, session) {
           cell_label <- dI.label()$new_cluster[mm]
           
           color_pheno <- dI.label_val$hm_pheno$color_clusters
-          showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, phenoclust = dI.label(),
-                                      NMC = metaClustNum, metadata =  mt, color_pheno = color_pheno) 
+          sc_df <- sample_cluster_df(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, metadata =  mt)
+          showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, 
+                                        NMC = metaClustNum, metadata =  mt, color_pheno = color_pheno)
+          cluster_t_test(df_sample_wf= sc_df, NMC = metaClustNum, metadata =  mt)
           
           showMedian <- plot_median_expr(flow_Set = fSmeta(), phenoclust =  dI.label(), cell_clustering = cell_clustering, 
-                                         metadata = mt, NMC = metaClustNum,
-                                         color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4)}
+                         metadata = mt, NMC = metaClustNum,
+                         color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4)}
         else{
           #if ((is.list(dI.label_val$hm_label_plus))){
           if ((is.list(dI.labelClust$hm_cluster))){
@@ -3854,12 +3965,14 @@ server <- function(input, output, session) {
                 metaClustNum <- nlevels(factor(dI.clust$mapping)) #metaClustNum <- nlevels(factor(dI.label()$new_cluster))
                 color_label <- dI.labelClust$hm_cluster$color_clusters #color_label <- dI.label_val$hm_label_plus$color_label}  
                 
-                showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, phenoclust = dI_label(),
-                                              NMC = metaClustNum, metadata =  mt, color_pheno = color_label) 
+                sc_df <- sample_cluster_df(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, metadata =  mt)
+                showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, 
+                                              NMC = metaClustNum, metadata =  mt, color_pheno = color_label)
+                cluster_t_test(df_sample_wf= sc_df, NMC = metaClustNum, metadata =  mt)
                 
                 showMedian <- plot_median_expr(flow_Set = fSmeta(), phenoclust =  dI_label, cell_clustering = cell_label, 
-                                               metadata = mt, NMC = metaClustNum, 
-                                               color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4)}}}}
+                                metadata = mt, NMC = metaClustNum, color_tag1 = color.tag1, color_tag2 = color.tag2, 
+                                color_tag3 = color.tag3, color_tag4 = color.tag4)}}}}
       
       if(!(is.data.frame(dI.labelClust$label.res))&&(inherits(x = dI.metaClust(),"list"))){
         #case 1)
@@ -3878,12 +3991,14 @@ server <- function(input, output, session) {
           cell_label <- factor(pheno_meta$new_cluster[mm], levels = 1:metaClustNum)
           
           color_metaclust <- dI.metaClust_val$hm_cluster$color_clusters
-          showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = TRUE, cell_label = cell_label, phenoclust = pheno_meta,
-                                      NMC = metaClustNum, metadata =  mt, color_pheno = color_metaclust) 
+          sc_df <- sample_cluster_df(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, metadata =  mt)
+          showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = TRUE, cell_label = cell_label, 
+                           NMC = metaClustNum, metadata =  mt, color_pheno = color_metaclust) 
+          cluster_t_test(df_sample_wf= sc_df, NMC = metaClustNum, metadata =  mt)
           
           showMedian <- plot_median_expr(flow_Set = fSmeta(), phenoclust =  pheno_meta, cell_clustering = cell_clustering, 
-                                         metadata = mt, NMC = metaClustNum, 
-                                         color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4)}
+                        metadata = mt, NMC = metaClustNum, 
+                        color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4)}
       
       if (inherits(x = showBars,"list")){
         dI.quant_val$bar_plot_sample <- showBars[[1]]
@@ -3928,20 +4043,24 @@ server <- function(input, output, session) {
         output$console_output_clust <- renderPrint("quantity plot visualization process ends")
         
         output$downloadQuantSample_csv <- downloadHandler(filename = function() {paste("df_sample","csv", sep = ".")},
-                                              content <- function(file) {file.copy("./tmpdata/df_sample.csv", file)}, contentType = "text/csv")
+                              content <- function(file) {file.copy("./tmpdata/df_sample.csv", file)}, contentType = "text/csv")
         
         if (uni.tag1 > 1){
           output$downloadQuantTag1_csv <- downloadHandler(filename = function() {paste0("df_",names(mt)[3],".csv")},
-                                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[3],".csv"), file)}, contentType = "text/csv")}
+                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[3],".csv"), file)}, 
+                              contentType = "text/csv")}
         if (uni.tag2 > 1){
           output$downloadQuantTag2_csv <- downloadHandler(filename = function() {paste0("df_",names(mt)[4],".csv")},
-                                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[4],".csv"), file)}, contentType = "text/csv")}
+                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[4],".csv"), file)}, 
+                              contentType = "text/csv")}
         if (uni.tag3 > 1){
           output$downloadQuantTag3_csv <- downloadHandler(filename = function() {paste0("df_",names(mt)[5],".csv")},
-                                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[5],".csv"), file)}, contentType = "text/csv")}
+                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[5],".csv"), file)}, 
+                              contentType = "text/csv")}
         if (uni.tag4 > 1){
           output$downloadQuantTag4_csv <- downloadHandler(filename = function() {paste0("df_",names(mt)[6],".csv")},
-                                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[6],".csv"), file)}, contentType = "text/csv")}}
+                              content <- function(file) {file.copy(paste0("./tmpdata/df_",names(mt)[6],".csv"), file)}, 
+                              contentType = "text/csv")}}
       else{ showBars <- "Impossible to perform the quantity analysis"}
       
       dI.flow$quantity <- FALSE
@@ -3954,7 +4073,8 @@ server <- function(input, output, session) {
       if (!(inherits(x = showBars,"list"))){
         validate(need(expr =  (inherits(x = showBars,"list")), message = showBars))}
       if (!(inherits(x = dI.labelClust$hm_cluster,"list"))){
-        validate(need(expr =  (inherits(x = dI.labelClust$hm_cluster,"list")), message = "Please perform the label I process first"))}
+        validate(need(expr =  (inherits(x = dI.labelClust$hm_cluster,"list")), 
+                      message = "Please perform the label I process first"))}
       })
 }) #input
   
@@ -3993,8 +4113,9 @@ server <- function(input, output, session) {
           
           color_pheno <- dI.label_val$hm_pheno$color_clusters
           if (input$time_step == TRUE){
-            dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, phenoclust = dI.label(), cell_label = cell_label, 
-                                                     metadata = mt, NMC = metaClustNum, color_pheno = color_pheno)}}
+            dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, 
+                                        phenoclust = dI.label(), cell_label = cell_label, metadata = mt, 
+                                        NMC = metaClustNum, color_pheno = color_pheno)}}
         
           #case 2) with label II performed
           if ((is.list(dI.labelClust$hm_cluster))){
@@ -4008,8 +4129,9 @@ server <- function(input, output, session) {
           mm <- match(cell_clustering, dI.label()$original_cluster)
           cell_label <- dI.label()$new_cluster[mm]
           if (input$time_step == TRUE){
-            dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, phenoclust = dI.label(), cell_label = cell_label, 
-                                                     metadata = mt, NMC = metaClustNum, color_pheno = color.pheno)}}
+            dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, phenoclust = dI.label(), 
+                                          cell_label = cell_label, metadata = mt, NMC = metaClustNum, 
+                                          color_pheno = color.pheno)}}
           else{
             #case 2) without pheno-data 
             output$QuantPlotp_panelStatus <- reactive({input$QuantPlotp_panelStatus=="show"})
@@ -4025,8 +4147,9 @@ server <- function(input, output, session) {
             color_label <- dI.labelClust$hm_cluster$color_clusters #color_label <- dI.label_val$hm_label_plus$color_label}  
             
             if (input$time_step == TRUE){
-              dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, phenoclust = dI_label(), cell_label = cell_label, 
-                                                       metadata = mt, NMC = metaClustNum, color_pheno = color_label)}}}} 
+              dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, 
+                                        phenoclust = dI_label(), cell_label = cell_label, metadata = mt, 
+                                        NMC = metaClustNum, color_pheno = color_label)}}}} 
       if(!(is.data.frame(dI.labelClust$label.res))&&(inherits(x = dI.metaClust(),"list"))){
           #case 1)
           output$QuantPlotp_panelStatus <- reactive({input$QuantPlotp_panelStatus=="show"})
@@ -4045,8 +4168,9 @@ server <- function(input, output, session) {
           cell_label <- factor(pheno_meta$new_cluster[mm])
           color_metaclust <- dI.metaClust_val$hm_cluster$color_clusters
           if (input$time_step == TRUE){
-            dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = TRUE, phenoclust = pheno_meta, cell_label = cell_label, 
-                                                     metadata = mt, NMC = metaClustNum, color_pheno = color_metaclust)}}
+            dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = TRUE, 
+                                        phenoclust = pheno_meta, cell_label = cell_label, metadata = mt, 
+                                        NMC = metaClustNum, color_pheno = color_metaclust)}}
       
       output$showBarTag4 <- renderPlotly({dI.quant_val$bar_plot_tag4})
       output$showDodgeTag4 <- renderPlotly({dI.quant_val$dodge_plot_tag4})
@@ -4068,13 +4192,16 @@ server <- function(input, output, session) {
       if (!(inherits(x = dI.quant_val_p$showStream,"list")))
       {validate(need(expr =  (inherits(x = dI.quant_val_p$showStream,"list")), message =  dI.quant_val_p$showStream))}
       if (!(uni.tag4>1))
-      {validate(need(expr =  (uni.tag4 > 1), message = "It needs at least two different steps to produce the stream plots!"))}
+      {validate(need(expr =  (uni.tag4 > 1), 
+                     message = "It needs at least two different steps to produce the stream plots!"))}
       if (!(inherits(x = dI.clust$mapping,"integer")))
-      {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), message = "You have to perform the clustering operation first!"))}
+      {validate(need(expr =  (inherits(x = dI.clust$mapping,"integer")), 
+                     message = "You have to perform the clustering operation first!"))}
       if (dI.flow$quantity)
       {validate(need(expr = (dI.flow$quantity == FALSE), message = "Please , perform the Quantity plots process first..."))}
       if (!(is.list(dI.labelClust$hm_cluster)))
-      {validate(need(expr = (inherits(x = dI.labelClust$hm_cluster,"list")), message = "Please , perform the label I process first..."))}
+      {validate(need(expr = (inherits(x = dI.labelClust$hm_cluster,"list")), 
+                     message = "Please , perform the label I process first..."))}
     })
   }) # end of observeEvent
   
@@ -4086,7 +4213,8 @@ server <- function(input, output, session) {
     
     observeEvent(eventExpr = input$panelEdit, {
       
-      validate(need(expr = !(is.null(input$FCS_input)&&is.null(input$zip_input)), message = "please select some samples"))
+      validate(need(expr = !(is.null(input$FCS_input)&&is.null(input$zip_input)), 
+                    message = "please select some samples"))
       print("start parsing process")
       output$console_output_pre <- renderPrint("start parsing process  - waiting...")
       options(warn = 0)
@@ -4137,7 +4265,8 @@ server <- function(input, output, session) {
             if (entry_check=="OK"){
               {messaggio <- "All the selected files seem to be have the correct FCS3.0 format. 
                 Check weather they could represents a flowSet with a common names & descriptions for every single flowFrame.
-                If this is not the case, then change the table below to fix the mismatching names, process files and dowload your new sample set"
+                If this is not the case, then change the table below to fix the mismatching names, 
+              process files and dowload your new sample set"
               validate(need(expr =  (entry_check=="fail"), message = messaggio))}}})
           }
         
@@ -4238,23 +4367,35 @@ server <- function(input, output, session) {
         dI.labelClust$label.res <- NULL #this is to reset the labelling I results
         dI.labelClust$hm_cluster <- NULL #this is to reset the labelling I results
         dI.label(NULL) #this is to reset the labelling II results
-        dI.labelClust$label.res <- NULL; #dI.map_val$showmapcomp <- NULL; #this to try to avoid the re-generation of the tsne map
+        dI.labelClust$label.res <- NULL; #dI.map_val$showmapcomp <- NULL; 
+        #this to try to avoid the re-generation of the tsne map
         dI.label_val$hm_label <- NULL; dI.label_val$hm_label_plus <- NULL
         dI.label_val$hm_pheno <- NULL; dI.label_val$hm_pheno_plus <- NULL
         
         dI.label_p_val$gg_map <- NULL; dI.label_p_val$gg_map_sample <- NULL;  
-        dI.label_p_val$gg_map_tag1 <- NULL;  dI.label_p_val$gg_map_tag2 <- NULL;  dI.label_p_val$gg_map_tag3 <- NULL; dI.label_p_val$gg_map_tag4 <- NULL
+        dI.label_p_val$gg_map_tag1 <- NULL;  dI.label_p_val$gg_map_tag2 <- NULL;  
+        dI.label_p_val$gg_map_tag3 <- NULL; dI.label_p_val$gg_map_tag4 <- NULL
         
         dI.quant_val$bar_plot_sample <- NULL; 
         dI.quant_val$dodge_plot_sample <- NULL; 
-        dI.quant_val$bar_plot_tag1 = NULL; dI.quant_val$bar_plot_tag2 <- NULL; dI.quant_val$bar_plot_tag3 <- NULL; dI.quant_val$bar_plot_tag4 <- NULL
-        dI.quant_val$dodge_plot_tag1 = NULL; dI.quant_val$dodge_plot_tag2 <- NULL; dI.quant_val$dodge_plot_tag3 <- NULL; dI.quant_val$dodge_plot_tag4 <- NULL
-        dI.quant_val$med_expr_tag1 = NULL; dI.quant_val$med_expr_tag2 <- NULL; dI.quant_val$med_expr_tag3 <- NULL; dI.quant_val$med_expr_tag4 <- NULL 
+        dI.quant_val$bar_plot_tag1 = NULL; dI.quant_val$bar_plot_tag2 <- NULL; dI.quant_val$bar_plot_tag3 <- NULL; 
+        dI.quant_val$bar_plot_tag4 <- NULL
+        dI.quant_val$dodge_plot_tag1 = NULL; dI.quant_val$dodge_plot_tag2 <- NULL; dI.quant_val$dodge_plot_tag3 <- NULL; 
+        dI.quant_val$dodge_plot_tag4 <- NULL
+        dI.quant_val$med_expr_tag1 = NULL; dI.quant_val$med_expr_tag2 <- NULL; dI.quant_val$med_expr_tag3 <- NULL; 
+        dI.quant_val$med_expr_tag4 <- NULL 
         
         dI.flow$labelI <- TRUE; dI.flow$meta_clust <- TRUE; dI.flow$labelII <- TRUE; 
         dI.flow$pheno_mapsI <- TRUE; dI.flow$pheno_mapsII <- TRUE; dI.flow$quantity <- TRUE; dI.flow$time_step <- TRUE
         
         del_tmpdata("all")
+        
+        file_name <- paste0("./tmpdata/meta_sample.csv")
+        write.csv(x = mt, file = file_name)
+        
+        file_name <- paste0("./tmpdata/meta_marker.csv")
+        write.csv(x = mk, file = file_name)
+        
         ## MDS plot ----
         
         clean_graph()
@@ -4263,13 +4404,13 @@ server <- function(input, output, session) {
           dI.ana$MDS.sample_id <- MDSplot_new(flow_Set = fSmeta(), meta = meta.table(), 
                                               type = "sample_id", selected = mk$selected, save = TRUE, metodo = input$mdsMethod) 
           if (uni.tag1>1){dI.ana$MDS.tag1 <- MDSplot_new(flow_Set = fSmeta(), meta = meta.table(), 
-                                                         type = "tag1", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}
+                                             type = "tag1", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}
           if (uni.tag2>1){dI.ana$MDS.tag2 <- MDSplot_new(flow_Set = fSmeta(), meta = meta.table(), 
-                                                         type = "tag2", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}
+                                              type = "tag2", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}
           if (uni.tag3>1){dI.ana$MDS.tag3 <- MDSplot_new(flow_Set = fSmeta(), meta = meta.table(), 
-                                                         type = "tag3", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}
+                                              type = "tag3", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}
           if (uni.tag4>1){dI.ana$MDS.tag4 <- MDSplot_new(flow_Set = fSmeta(), meta = meta.table(), 
-                                                         type = "tag4", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}}
+                                              type = "tag4", selected = mk$selected, save = TRUE, metodo = input$mdsMethod)}}
         
         #if(class(dI.ana$MDS.sample_id[[1]])[1]=="plotly"){print("MDS plots saved")}
         if(inherits(x = dI.ana$MDS.sample_id[[1]], "plotly")){print("MDS plots saved")}
@@ -4347,16 +4488,16 @@ server <- function(input, output, session) {
             color.clust <<- color_set[1:dI.clust$NumCluster]}else{
               dI.clust$mapping <- phenograph.res}}
         
-        if (input$ClustAlgo == "flowClust"){
-          flowClust.res <- flowClust_clust(flow_Set = fSmeta(), selected_markers = meta.markers()$selected, 
-                                           K = input$k, seed = input$set_seed)
-          if (inherits(x = flowClust.res, "list")){
-            dI.clust$mapping <- flowClust.res[[1]]
-            dI.clust$codes <- flowClust.res[[2]]
-            dI.clust$NumCluster <- nlevels(factor(dI.clust$mapping))
-            color.clust <<- color_set[1:dI.clust$NumCluster]
-            print("flowClust report produced")}else{
-              dI.clust$mapping <- flowClust.res}}
+      if (input$ClustAlgo == "DepecheR"){
+        depeche.res <- DepecheR_clust(flow_Set = fSmeta(), selected_markers = meta.markers()$selected, 
+                                      K = input$k, seed = input$set_seed)
+        if (inherits(x = depeche.res,"list")){
+          dI.clust$mapping <- depeche.res[[1]]
+          dI.clust$codes <- depeche.res[[2]]
+          dI.clust$NumCluster <- nlevels(factor(dI.clust$mapping))
+          color.clust <<- color_set[1:dI.clust$NumCluster]
+          print("DepecheR report produced")}else{
+            dI.clust$mapping <- depeche.res}}
         
         output$console_output_clust <- renderPrint("clustering process ends")
         print("clustering process ends")
@@ -4372,8 +4513,8 @@ server <- function(input, output, session) {
           else{minkowski = NULL}
           
           clust_color <- color.clust
-          plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = clust_color, distance = input$ClusteringPdistance, 
-                                  power = minkowski, setseed = input$set_seed, type = "clust")
+          plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = clust_color, 
+                        distance = input$ClusteringPdistance, power = minkowski, setseed = input$set_seed, type = "clust")
           dI.clust$sil_plot <- plot_res[[1]] 
           dI.clust$sil_summary <- plot_res[[2]]
           output$console_output_clust <- renderPrint("clusters evaluation process end")
@@ -4386,6 +4527,7 @@ server <- function(input, output, session) {
           
         ### Label I ----
         clean_graph()
+       
         #if((class(dI.clust$codes)=="matrix")&&(class(fSmeta())=="flowSet")&&(dI.flow$labelI))
         #Warning: Error in &&: 'length = 2' in coercion to 'logical(1)' 
         # from release 4.2.0 on:  
@@ -4398,23 +4540,24 @@ server <- function(input, output, session) {
             {if (input$signature_finding_method=="Densities"){
               dI.labelClust$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, clustId = dI.clust$mapping,
                                           color_marker = color.marker, tipo = "cluster", central = input$HeatMapCentral,
-                                          min_quantile = input$minQuantile, max_quantile = input$maxQuantile,
+                                          min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
                                           pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold), silent = FALSE)
-                if (inherits(x = dI.metaClust_val$cs.res,"list")){options(warn = 0)} else errore <- dI.metaClust_val$cs.res}
+                if (inherits(x = dI.labelClust$cs.res,"list")){options(warn = 0)} else errore <- dI.metaClust_val$cs.res}
               
-            if((inherits(x = dI.clust$mapping, "integer"))&&(input$minQuantile<input$maxQuantile)&&(input$pos_threshold>=input$neg_threshold)) {
+            if((inherits(x = dI.clust$mapping, "integer"))&&(input$pos_threshold>=input$neg_threshold)) {
+              
               print("start labelling process")
               mapping <- dI.clust$mapping 
               if(nrow(ph)>0){
                 if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
                 label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = mapping, 
                                   phenoquery = ph, central = input$HeatMapCentral, 
-                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
                                   pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
                                   cluster_signature = dI.labelClust$cs.res[[2]])} else
                 {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = mapping, 
                                   phenoquery = ph, central = input$HeatMapCentral, 
-                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
                                   pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold)}
               
               dI.labelClust$label.res <- label.res}
@@ -4426,43 +4569,46 @@ server <- function(input, output, session) {
                 print("start producing heatmap")
                 if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
                 dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
-                                                clustering = mapping, selected_markers = meta.markers()$selected, 
-                                                cluster_labelling = dI.labelClust$label.res, 
-                                                pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                color_clusters = color_clusters, color_label = color.pheno, 
-                                                cluster.signature = dI.labelClust$cs.res[[1]])}
+                                              clustering = mapping, selected_markers = meta.markers()$selected, 
+                                              cluster_labelling = dI.labelClust$label.res, 
+                                              pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
+                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                              max_quantile = input$maxQuantile, quant = input$no_Quant,
+                                              pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
+                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                                              color_clusters = color_clusters, color_label = color.pheno, 
+                                              cluster.signature = dI.labelClust$cs.res[[1]])}
                 else{
                   dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
-                                                clustering = mapping, selected_markers = meta.markers()$selected, 
-                                                cluster_labelling = dI.labelClust$label.res, 
-                                                pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                color_clusters = color_clusters, color_label = color.pheno)}
+                                              clustering = mapping, selected_markers = meta.markers()$selected, 
+                                              cluster_labelling = dI.labelClust$label.res, 
+                                              pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
+                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                              max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                              neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                              hclust_method = input$HeatmapHCCriteria, color_clusters = color_clusters, 
+                                              color_label = color.pheno)}
                 }
               else
               {
                 if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
                 dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
-                                                  clustering = mapping, selected_markers = meta.markers()$selected, 
-                                                  pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                  central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                  pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                  dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                  color_clusters = color_clusters, color_label = color.pheno, 
-                                                  cluster_labelling = dI.labelClust$cs.res[[1]])}
+                                              clustering = mapping, selected_markers = meta.markers()$selected, 
+                                              pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
+                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                              max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                              neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                              hclust_method = input$HeatmapHCCriteria, color_clusters = color_clusters, 
+                                              color_label = color.pheno, cluster.signature = dI.labelClust$cs.res[[1]])}
                 else
                   {dI.labelClust$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label", 
-                                                  clustering = mapping, selected_markers = meta.markers()$selected, 
-                                                  pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
-                                                  central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                  pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                  dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                  color_clusters = color_clusters, color_label = color.pheno)}}
+                                              clustering = mapping, selected_markers = meta.markers()$selected, 
+                                              pheno_table = ph, Nclust = length(dI.labelClust$label.res$new_cluster), 
+                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                              max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                              neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                              hclust_method = input$HeatmapHCCriteria, color_clusters = color_clusters, 
+                                              color_label = color.pheno)}}
               
            #   dI.flow$labelI <- FALSE}}
               dI.flow$labelI <- FALSE}}
@@ -4472,65 +4618,67 @@ server <- function(input, output, session) {
         ### Meta-clustering -------------------------------------------------------------
         
         clean_graph()
-        #if((class(dI.clust$codes)=="matrix")&&(class(dI.clust$mapping)=="integer")&&(dI.flow$meta_clust)){
-        if (inherits(x = dI.clust$codes, "matrix")){
+        if((inherits(x = dI.clust$codes,"matrix"))&&(inherits(x = dI.clust$mapping,"integer"))&&(dI.flow$meta_clust)){
           print("start meta-clustering process")
-          dI.metaClust(NULL) #this is to reset the metaclustering results
+          dI.metaClust(NULL) #this is to reset the meta-clustering results
           
-          #if ((input$MetaClustAlgo == "ConsensusClusterPlus")&&(dI.clust$NumCluster>input$MetaClustNum)){
-          if (dI.clust$NumCluster>input$MetaClustNum){
+          if ((input$MetaClustAlgo == "ConsensusClusterPlus")&&(dI.clust$NumCluster>input$MetaClustNum)){
             mc.res <- meta_clustering(codes = dI.clust$codes, maxK = input$MetaClustNum, reps = 100, 
                                       pItem = 1.0, clusterAlg = input$MetaClustCriteria, distance = input$MetaClustDist, 
                                       seed = input$set_seed, savedir = "./tmpdata", save = FALSE)
-            dI.metaClust(mc.res) #Notice, depending of the dataset, the meta_clustering can produce a number of meta_clusters which is less than input$MetaClustNum 
+            dI.metaClust(mc.res) 
+            #Notice, depending of the dataset, the meta_clustering can produce a number of meta_clusters 
+            #which is less than input$MetaClustNum 
             
             if(inherits(x = dI.metaClust(),"list")) {
               code_clustering <- as.integer(dI.metaClust()[[input$MetaClustNum]]$consensusClass) #[1:Number of clusters]
               cell_clustering <- code_clustering[dI.clust$mapping] #[1:Number of events]
               
               if (input$signature_finding_method=="Densities"){
-                dI.metaClust_val$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, clustId = code_clustering,
-                                                  color_marker = color.marker, tipo = "meta", central = input$HeatMapCentral,
-                                                  min_quantile = input$minQuantile, max_quantile = input$maxQuantile,
-                                                  pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold), silent = FALSE)
-                if (inherits(x = dI.metaClust_val$cs.res,"list")){options(warn = 0)} else errore <- dI.metaClust_val$cs.res}
+                dI.metaClust_val$cs.res <- try(expr = cluster_signature(fS = fSmeta(), selected.marker = mk$selected, 
+                            clustId = code_clustering, color_marker = color.marker, tipo = "meta", 
+                            central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold), silent = FALSE)
+                if (inherits(x = dI.metaClust_val$cs.res,"list")){options(warn = 0)} else 
+                  errore <- dI.metaClust_val$cs.res}
               
               if (is.data.frame(dI.labelClust$label.res)){ 
                 if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
-                dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering, 
-                                                        cluster_labelling = NULL, pheno_table = ph, Nclust = input$MetaClustNum, 
-                                                        central = input$HeatMapCentral, selected_markers = meta.markers()$selected, 
-                                                        min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                        pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                        dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                        color_clusters = color.metaclust, 
-                                                        cluster.signature = dI.metaClust_val$cs.res[[1]])}
+                dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                            clustering = cell_clustering, cluster_labelling = NULL, pheno_table = ph, 
+                            Nclust = input$MetaClustNum, central = input$HeatMapCentral, 
+                            selected_markers = meta.markers()$selected, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                            hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust, 
+                            cluster.signature = dI.metaClust_val$cs.res[[1]])}
                 else{
-                  dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering, 
-                                                        cluster_labelling = NULL, pheno_table = ph, Nclust = input$MetaClustNum, 
-                                                        central = input$HeatMapCentral, selected_markers = meta.markers()$selected, 
-                                                        min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                        pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                        dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                        color_clusters = color.metaclust)}} 
+                  dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                            clustering = cell_clustering, cluster_labelling = NULL, pheno_table = ph, 
+                            Nclust = input$MetaClustNum, central = input$HeatMapCentral, 
+                            selected_markers = meta.markers()$selected, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                            hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust)}} 
               else
                 {if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
-                  dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering,
-                                                        cluster_labelling = NULL, pheno_table = NULL, Nclust = input$MetaClustNum, 
-                                                        central = input$HeatMapCentral, selected_markers = meta.markers()$selected,
-                                                        min_quantile = input$minQuantile, max_quantile = input$maxQuantile,
-                                                        pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                        dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                        color_clusters = color.metaclust, 
-                                                        cluster.signature = dI.metaClust_val$cs.res[[1]])}
+                  dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                            clustering = cell_clustering, cluster_labelling = NULL, pheno_table = NULL, 
+                            Nclust = input$MetaClustNum, central = input$HeatMapCentral, 
+                            selected_markers = meta.markers()$selected, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                            hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust, 
+                            cluster.signature = dI.metaClust_val$cs.res[[1]])}
                   else{
-                    dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", clustering = cell_clustering,
-                                                        cluster_labelling = NULL, pheno_table = NULL, Nclust = input$MetaClustNum, 
-                                                        central = input$HeatMapCentral, selected_markers = meta.markers()$selected,
-                                                        min_quantile = input$minQuantile, max_quantile = input$maxQuantile,
-                                                        pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                        dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                        color_clusters = color.metaclust)}
+                    dI.metaClust_val$hm_cluster <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "meta", 
+                            clustering = cell_clustering, cluster_labelling = NULL, pheno_table = NULL, 
+                            Nclust = input$MetaClustNum, central = input$HeatMapCentral, 
+                            selected_markers = meta.markers()$selected, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                            hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust)}
                 }}
             if (input$clusteringPerf){
               print("start clusters evaluation process")
@@ -4542,8 +4690,9 @@ server <- function(input, output, session) {
               else{minkowski = NULL}
               
               clust_color <- color.metaclust
-              plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, color = color.metaclust, distance = input$ClusteringPdistance, 
-                                      power = minkowski, setseed = input$set_seed, type = "meta")
+              plot_res <- cluster_eva(fF = flow_Frame, clustering = cell_clustering, 
+                              color = color.metaclust, distance = input$ClusteringPdistance, 
+                              power = minkowski, setseed = input$set_seed, type = "meta")
               dI.metaClust_val$sil_plot <- plot_res[[1]] 
               dI.metaClust_val$sil_summary <- plot_res[[2]]
               output$console_output_clust <- renderPrint("clusters evaluation process end")
@@ -4555,7 +4704,8 @@ server <- function(input, output, session) {
         
        ### Mapping -----------------------------------------------------------------------------
         mapres <- NULL
-        if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&(inherits(x = fSmeta(),"flowSet"))){
+        if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&
+           (inherits(x = fSmeta(),"flowSet"))){
           print("start mapping process")
           if ((inherits(x = dI.tSNE.eva.init$mapres_init,"list"))&&(!input$two_three)&&(input$mapType=='tSNE')){
             mapres <- dI.tSNE.eva.init$mapres_init}
@@ -4589,23 +4739,28 @@ server <- function(input, output, session) {
                                      NMC = metaClustNum, color_clusters = color_metaclust, save = TRUE)
             fF <- concatenating_fS(flow_Set = fSmeta(), stringa = "conc_meta_sample")
             nomi <- colnames(exprs(fF))
-            if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
-            if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}
+            if (!any(grepl("clusterId", nomi, fixed = TRUE))){
+              fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
+            if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){
+              fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}
             
-            jt <- join_tag(frame = fF, meta = mt, type = "meta", tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)}
+            jt <- join_tag(frame = fF, meta = mt, type = "meta", 
+                           tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)}
           else{
             if (is.data.frame(dI.labelClust$label.res)){
               meta_clust <- dI.labelClust$label.res$numeric
               metaClustNum <- length(dI.labelClust$label.res$numeric)
             
               color_metaclust <- dI.labelClust$hm_cluster$color_clusters
-              showmap <- map_plot_comp(map_df = dI.map()[[1]], type = input$mapType, two_three = input$two_three, map_inds = dI.map()[[2]],
-                                     map_reduced = dI.map()[[3]], metadata = mt, clust = dI.clust$mapping, 
+              showmap <- map_plot_comp(map_df = dI.map()[[1]], type = input$mapType, two_three = input$two_three, 
+                          map_inds = dI.map()[[2]], map_reduced = dI.map()[[3]], metadata = mt, clust = dI.clust$mapping, 
                                      NMC = metaClustNum, color_clusters = color_metaclust, save = TRUE)}
               fF <- concatenating_fS(flow_Set = fSmeta(), stringa = "conc_meta_sample")
               nomi <- colnames(exprs(fF))
-              if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
-            jt <- join_tag(frame = fF, meta = mt, type = "clust", tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)}
+              if (!any(grepl("clusterId", nomi, fixed = TRUE))){
+                fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
+            jt <- join_tag(frame = fF, meta = mt, type = "clust", 
+                           tag1col=color.tag1, tag2col=color.tag2, tag3col=color.tag3, tag4col=color.tag4)}
           
           print("map printing ends")}
         
@@ -4642,12 +4797,14 @@ server <- function(input, output, session) {
               unlink(lista_file, recursive = FALSE)}
             
             nomi <- colnames(exprs(fF))
-            if (!any(grepl("clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
+            if (!any(grepl("clusterId", nomi, fixed = TRUE))){
+              fF <- add_dim(flow_Frame = fF, dim_name = "clusterId", dim_vect = dI.clust$mapping)}
             
             if (inherits(x = dI.metaClust(),"list")){
               code_clustering <- dI.metaClust()[[input$MetaClustNum]]$consensusClass 
               cell_clustering <- as.integer(code_clustering[dI.clust$mapping])
-              if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}}
+              if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){
+                fF <- add_dim(flow_Frame = fF, dim_name = "meta_clusterId", dim_vect = cell_clustering)}}
             
             if (inherits(x = dI.metaClust(),"list")){
             jt <- join_tag(frame = fF, meta = mt, type = "meta",
@@ -4660,7 +4817,8 @@ server <- function(input, output, session) {
             nomi_tag <- nomi_tag[-(1:2)]
             for (i in 1:4){mt[,i+2] <- (as.numeric(factor(meta[,i+2])))}
             if (!any(grepl("meta_clusterId", nomi, fixed = TRUE))){
-              df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId", "meta_clusterId")])} else {df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId")])}
+              df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId", "meta_clusterId")])} else {
+                df <- as.data.frame(exprs(fF)[,c("SampleID", "clusterId")])}
             
             meta$SampleID <- as.numeric(1:nrow(meta))
             rj <- right_join(meta,df)
@@ -4714,31 +4872,31 @@ server <- function(input, output, session) {
             color_label <- color.pheno
             if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
               label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
-                                      phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                      pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                      cluster_signature = dI.metaClust_val$cs.res[[1]])} else
+                            phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold, cluster_signature = dI.metaClust_val$cs.res[[1]])} else
               {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
-                                      phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                      max_quantile = input$maxQuantile, pos_threshold = input$pos_threshold, 
-                                      neg_threshold = input$neg_threshold)}
+                            phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold)}
             dI.label(label.res)
             print("labelling II process ends")
             if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
               dI.label_val$hm_label <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "label", 
-                                          clustering = cell_clustering, cluster_labelling = dI.label(), 
-                                          Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                          central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                          pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                          dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                          color_clusters = color.metaclust, color_label = color_label, work = 3, 
-                                          cluster.signature = dI.metaClust_val$cs.res[[1]])}
+                            clustering = cell_clustering, cluster_labelling = dI.label(), Nclust = metaClustNum, 
+                            selected_markers = meta.markers()$selected, pheno_table = ph,
+                            central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                            max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                            neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                            hclust_method = input$HeatmapHCCriteria, color_clusters = color.metaclust, 
+                            color_label = color_label, work = 3, cluster.signature = dI.metaClust_val$cs.res[[1]])}
             else{dI.label_val$hm_label <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "label", 
-                                            clustering = cell_clustering, cluster_labelling = dI.label(), 
-                                            Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                            central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                            pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                            dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                            color_clusters = color.metaclust, color_label = color_label, work = 3)}
+                            clustering = cell_clustering, cluster_labelling = dI.label(), 
+                            Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                            central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                            quant = input$no_Quant, pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
+                            dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                            color_clusters = color.metaclust, color_label = color_label, work = 3)}
             
             mm <- match(cell_clustering, dI.label()$original_cluster)
             cell_clustering2 <- dI.label()$new_cluster[mm]
@@ -4747,27 +4905,29 @@ server <- function(input, output, session) {
             if ((nlevels(factor(cell_clustering2))) > 1){
               if ((inherits(x = dI.metaClust_val$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
                 dI.label_val$hm_pheno <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                              clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                              Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                              pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                              color_clusters = color_label, work = 3, 
-                                              cluster_labelling = dI.metaClust_val$cs.res[[1]])}
+                             clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                             Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                             central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                             quant = input$no_Quant, pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
+                             dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                             color_clusters = color_label, work = 3, cluster_labelling = dI.metaClust_val$cs.res[[1]])}
               else
               {dI.label_val$hm_pheno <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                              clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                              Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                              pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                                        color_clusters = color_label, work = 3)}}
-            else{dI.label_val$hm_pheno <- "The second plot cannot be built: there must be at least two different labelled phenotypes"}}}
+                             clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                             Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
+                             central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                             quant = input$no_Quant, pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
+                             dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                             color_clusters = color_label, work = 3)}}
+            else{dI.label_val$hm_pheno <- "The second plot cannot be built: 
+            there must be at least two different labelled phenotypes"}}}
           
          #the else statement is removed here: the workflow 2) is performed at the end
         #### Pheno maps -------
+        
         clean_graph()
-        if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&(inherits(x = dI.map(),"list"))&&(dI.flow$pheno_mapsI))
+        if(((is.data.frame(dI.labelClust$label.res))||(inherits(x = dI.metaClust(),"list")))&&
+           (inherits(x = dI.map(),"list"))&&(dI.flow$pheno_mapsI))
         { 
           if ((inherits(x = dI.map(),"list"))&&(inherits(x = dI.clust$mapping,"integer")))
           {
@@ -4786,7 +4946,8 @@ server <- function(input, output, session) {
                 color_pheno <- dI.label_val$hm_pheno$color_clusters
                 showMaps <- plot_labelling(flow_Set = fSmeta(), phenoclust = dI.label(), clustering = dI.clust$mapping, 
                                            m_clustering = cell_clustering , map_res = dI.map()[[1]], map_cell = map_cell, 
-                                           selected_markers = mk$selected, metadata = mt, color_clusters = color_pheno, save = TRUE, work = 3)}}
+                                           selected_markers = mk$selected, metadata = mt, color_clusters = color_pheno, 
+                                           save = TRUE, work = 3)}}
             else
             {if(!(is.data.frame(dI.labelClust$label.res))&&(inherits(x = dI.metaClust(),"list"))){
               # case 1)
@@ -4805,7 +4966,8 @@ server <- function(input, output, session) {
               color_metaclust <- dI.metaClust_val$hm_cluster$color_clusters
               showMaps <- plot_labelling(flow_Set = fSmeta(), phenoclust = pheno_meta, clustering = dI.clust$mapping, 
                                          m_clustering = cell_clustering , map_res = dI.map()[[1]], map_cell = map_cell, 
-                                         selected_markers = mk$selected, metadata = mt, color_clusters = color_metaclust, save = TRUE, work = 1)}}
+                                         selected_markers = mk$selected, metadata = mt, 
+                                         color_clusters = color_metaclust, save = TRUE, work = 1)}}
            
               print("labelled map_p printing process ends")}
           
@@ -4830,13 +4992,17 @@ server <- function(input, output, session) {
               cell_label <- dI.label()$new_cluster[mm]
               
               color_pheno <- dI.label_val$hm_pheno$color_clusters #Error in : $ operator is invalid for atomic vectors
-              showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, phenoclust = dI.label(),
-                                            NMC = metaClustNum, metadata =  mt, color_pheno = color_pheno, save = TRUE, work = 3) 
+              sc_df <- sample_cluster_df(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, 
+                                         metadata =  mt, work = 3)
+              showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, 
+                                 metadata =  mt, color_pheno = color_pheno, save = TRUE, work = 3)
+              
+              cluster_t_test(df_sample_wf= sc_df, NMC = metaClustNum, metadata =  mt, work = 3)
               
               showMedian <- plot_median_expr(flow_Set = fSmeta(), phenoclust =  dI.label(), cell_clustering = cell_clustering, 
-                                             metadata = mt, NMC = metaClustNum,
-                                             color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4, 
-                                             save = TRUE, work = 3)}}
+                            metadata = mt, NMC = metaClustNum, 
+                            color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4, 
+                            save = TRUE, work = 3)}}
           # else is computed afterwords: the second worflow at the end
           if(!(is.data.frame(dI.labelClust$label.res))&&(inherits(x = dI.metaClust(), "list"))){
             #case 1)
@@ -4853,13 +5019,16 @@ server <- function(input, output, session) {
             cell_label <- factor(pheno_meta$new_cluster[mm], levels = 1:metaClustNum)
             
             color_metaclust <- dI.metaClust_val$hm_cluster$color_clusters
-            showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = TRUE, cell_label = cell_label, phenoclust = pheno_meta,
-                                          NMC = metaClustNum, metadata =  mt, color_pheno = color_metaclust, save = TRUE, work = 1) 
+            sc_df <- sample_cluster_df(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, 
+                                       metadata =  mt, work = 1)
+            showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = TRUE, cell_label = cell_label, 
+                                          NMC = metaClustNum, metadata =  mt, color_pheno = color_metaclust, save = TRUE, work = 1)
+            cluster_t_test(df_sample_wf= sc_df, NMC = metaClustNum, metadata =  mt, work = 1)
             
             showMedian <- plot_median_expr(flow_Set = fSmeta(), phenoclust =  pheno_meta, cell_clustering = cell_clustering, 
-                                           metadata = mt, NMC = metaClustNum, 
-                                           color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4, 
-                                           save = TRUE, work = 1)}
+                              metadata = mt, NMC = metaClustNum, 
+                              color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4, 
+                              save = TRUE, work = 1)}
           print("quantity plot printing process ends")
           dI.flow$quantity <- FALSE} # if(class(dI.clust$mapping)=="numeric")
         
@@ -4867,7 +5036,7 @@ server <- function(input, output, session) {
         
         clean_graph()
         if((inherits(x = dI.clust$mapping, "integer"))&&(uni.tag4 > 1)&&(dI.flow$time_step)){
-          print("start printing plot visualization")
+          print("start printing time points plot visualization")
           
           if(is.data.frame(dI.label())){
             if(inherits(x = dI.metaClust(), "list")){
@@ -4880,8 +5049,8 @@ server <- function(input, output, session) {
               cell_label <- dI.label()$new_cluster[mm]
               color_pheno <- dI.label_val$hm_pheno$color_clusters
               if (input$time_step == TRUE){
-                dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, phenoclust = dI.label(), cell_label = cell_label, 
-                                                       metadata = mt, NMC = metaClustNum, color_pheno = color_pheno)}}} 
+                dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = FALSE, phenoclust = dI.label(), 
+                                    cell_label = cell_label, metadata = mt, NMC = metaClustNum, color_pheno = color_pheno)}}} 
           else{  
             if(!(is.data.frame(dI.labelClust$label.res))&&(inherits(x = dI.metaClust(),"list"))){
               #case 1)
@@ -4899,8 +5068,9 @@ server <- function(input, output, session) {
               cell_label <- factor(pheno_meta$new_cluster[mm])
               color_metaclust <- dI.metaClust_val$hm_cluster$color_clusters
               if (input$time_step == TRUE){
-                dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = TRUE, phenoclust = pheno_meta, cell_label = cell_label, 
-                                                       metadata = mt, NMC = metaClustNum, color_pheno = color_metaclust)}}}
+                dI.quant_val_p$showStream <- plot_stream(flow_Set = fSmeta(), flag = TRUE, phenoclust = pheno_meta, 
+                                        cell_label = cell_label, metadata = mt, 
+                                        NMC = metaClustNum, color_pheno = color_metaclust)}}}
           
           dI.flow$time_step <- FALSE}
         
@@ -4918,32 +5088,32 @@ server <- function(input, output, session) {
           color_clusters <- dI.labelClust$hm_cluster$color_clusters
           if ((inherits(x = dI.labelClust$cs.res, "list"))&&(input$signature_finding_method=="Densities")){
           dI.label_val$hm_label_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label_plus", 
-                                              clustering = cell_clustering, selected_markers = meta.markers()$selected, 
-                                              cluster_labelling = label.res, 
-                                              pheno_table = ph, Nclust = metaClustNum, 
-                                              central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                              pos_threshold = dI.labelClust$cs.res[[1]], neg_threshold = dI.labelClust$cs.res[[1]], 
-                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                              color_clusters = color_clusters, color_label = color_label, work = 2, 
-                                              cluster.signature = dI.labelClust$cs.res[[1]])}
+                                         clustering = cell_clustering, selected_markers = meta.markers()$selected, 
+                                         cluster_labelling = label.res, pheno_table = ph, Nclust = metaClustNum, 
+                                         central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                         max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = dI.labelClust$cs.res[[1]], 
+                                         neg_threshold = dI.labelClust$cs.res[[1]], 
+                                         dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                                         color_clusters = color_clusters, color_label = color_label, work = 2, 
+                                         cluster.signature = dI.labelClust$cs.res[[1]])}
           else{dI.label_val$hm_label_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "full_label_plus", 
-                                                clustering = cell_clustering, selected_markers = meta.markers()$selected, 
-                                                cluster_labelling = label.res, 
-                                                pheno_table = ph, Nclust = metaClustNum, 
-                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold, 
-                                                dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                color_clusters = color_clusters, color_label = color_label, work = 2)}
+                                         clustering = cell_clustering, selected_markers = meta.markers()$selected, 
+                                         cluster_labelling = label.res, pheno_table = ph, Nclust = metaClustNum, 
+                                         central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                         max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
+                                         neg_threshold = input$neg_threshold, dist_method = input$HeatMapMethod, 
+                                         hclust_method = input$HeatmapHCCriteria, color_clusters = color_clusters, 
+                                         color_label = color_label, work = 2)}
           
           if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){  
           label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
                                       phenoquery = ph, central = input$HeatMapCentral, 
-                                      min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
+                                      min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
                                       pos_threshold = dI.labelClust$cs.res[[1]], neg_threshold = dI.labelClust$cs.res[[1]], 
                                       cluster_signature = dI.labelClust$cs.res[[2]])} else                        
           {label.res <- phenocluster(flow_Set = fSmeta(), selected_markers = mk$selected, clustering = cell_clustering, 
                                       phenoquery = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
-                                      max_quantile = input$maxQuantile, pos_threshold = input$pos_threshold, 
+                                      max_quantile = input$maxQuantile, quant = input$no_Quant, pos_threshold = input$pos_threshold, 
                                       neg_threshold = input$neg_threshold)}
           dI.label(label.res)
           mm <- match(cell_clustering, dI.label()$original_cluster)
@@ -4953,21 +5123,23 @@ server <- function(input, output, session) {
           if ((nlevels(factor(cell_clustering2))) > 1){
             if ((inherits(x = dI.labelClust$cs.res,"list"))&&(input$signature_finding_method=="Densities")){
               dI.label_val$hm_pheno_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                                clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                                Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                pos_threshold = dI.labelClust$cs.res[[1]], neg_threshold = dI.labelClust$cs.res[[1]],
-                                                dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                color_clusters = color_label, work = 2, 
-                                                cluster.labelling = dI.labelClust$cs.res[[1]])}
+                                              clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                                              Nclust = metaClustNum, selected_markers = meta.markers()$selected, 
+                                              pheno_table = ph, central = input$HeatMapCentral, min_quantile = input$minQuantile, 
+                                              max_quantile = input$maxQuantile, quant = input$no_Quant, 
+                                              pos_threshold = dI.labelClust$cs.res[[1]], neg_threshold = dI.labelClust$cs.res[[1]],
+                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                                              color_clusters = color_label, work = 2, 
+                                              cluster.labelling = dI.labelClust$cs.res[[1]])}
             else
             {dI.label_val$hm_pheno_plus <- plot_clustering_heatmap_wrapper(flow_Set = fSmeta(), type_HM = "pheno", 
-                                                clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
-                                                Nclust = metaClustNum, selected_markers = meta.markers()$selected, pheno_table = ph,
-                                                central = input$HeatMapCentral, min_quantile = input$minQuantile, max_quantile = input$maxQuantile, 
-                                                pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
-                                                dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
-                                                color_clusters = color_label, work = 2)}}
+                                              clustering = cell_clustering2,  #cluster_labelling = dI.label(), 
+                                              Nclust = metaClustNum, selected_markers = meta.markers()$selected, 
+                                              pheno_table = ph, central = input$HeatMapCentral, 
+                                              min_quantile = input$minQuantile, max_quantile = input$maxQuantile, quant = input$no_Quant,
+                                              pos_threshold = input$pos_threshold, neg_threshold = input$neg_threshold,
+                                              dist_method = input$HeatMapMethod, hclust_method = input$HeatmapHCCriteria, 
+                                              color_clusters = color_label, work = 2)}}
           else{dI.label_val$hm_pheno_plus <- "The second plot cannot be built: there must be at least two different labelled phenotypes"}
           
           print("labelling process for workflow 2 ends")}
@@ -4984,7 +5156,8 @@ server <- function(input, output, session) {
           
           showMaps <- plot_labelling(flow_Set = fSmeta(), phenoclust = dI.label(), clustering = dI.clust$mapping, 
                                      m_clustering = cell_clustering2 , map_res = dI.map()[[1]], map_cell = map_cell, 
-                                     selected_markers = mk$selected, metadata = mt, color_clusters = color_label, save = TRUE, work = 2)
+                                     selected_markers = mk$selected, metadata = mt, color_clusters = color_label, 
+                                     save = TRUE, work = 2)
           print("labelled_p map printing for workflow 2 ends")}
         
         clean_graph()
@@ -5002,13 +5175,15 @@ server <- function(input, output, session) {
                 metaClustNum <- nlevels(factor(dI.label()$new_cluster))
                 color_label <- dI.label_val$hm_label_plus$color_label
                 cell_clustering <- dI.clust$mapping 
-                
-                showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, phenoclust = dI.label(),
-                                              NMC = metaClustNum, metadata =  mt, color_pheno = color_label, save = TRUE, work = 2) 
+                sc_df <- sample_cluster_df(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, NMC = metaClustNum, 
+                                           metadata =  mt, work = 2)
+                showBars <- plot_labellingbar(flow_Set = fSmeta(), flag = FALSE, cell_label = cell_label, 
+                             NMC = metaClustNum, metadata =  mt, color_pheno = color_label, save = TRUE, work = 2)
+                cluster_t_test(df_sample_wf= sc_df, NMC = metaClustNum, metadata =  mt, work = 2)
                 
                 showMedian <- plot_median_expr(flow_Set = fSmeta(), phenoclust =  dI.label(), cell_clustering = cell_clustering, 
-                                               metadata = mt, NMC = metaClustNum, 
-                                               color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4,
+                             metadata = mt, NMC = metaClustNum, 
+                             color_tag1 = color.tag1, color_tag2 = color.tag2, color_tag3 = color.tag3, color_tag4 = color.tag4,
                                                save = TRUE, work = 2)}}
           
           print("quantity print process for workflow 2 ends")
@@ -5021,21 +5196,20 @@ server <- function(input, output, session) {
         output$runAuto_panelStatus <- reactive({input$runAuto_panelStatus=="show"})
         outputOptions(output, "runAuto_panelStatus", suspendWhenHidden = FALSE)}
     
-        output$downloadRunAuto <- downloadHandler(
-            filename = function() {
-              paste("Analysis_material", "zip", sep=".")
-          },
+      output$downloadRunAuto <- downloadHandler(
+        filename = function() {
+          paste("Analysis_material", "zip", sep=".")
+        },
         
-          content <- function(file) {
-            
-            del_tmpdata()
-            file_path <- file
-            #setwd(data_dir)
-            Zip_Files <- list.files(path = data_dir, pattern = "*.*")
-            zip::zip(zipfile = file_path, files = Zip_Files, include_directories = FALSE, root = tempdir())
-            #setwd(app_dir)
-            },
-          contentType = "application/zip")
+        content = function(file){
+          
+          file_path <- file
+          
+          Zip_Files <- list.files(path = data_dir)
+          Zip_Files <- str_sort(x = Zip_Files, numeric = TRUE)
+          zip::zip(zipfile = file_path, files = Zip_Files, include_directories = TRUE, root = data_dir)
+        },
+        contentType = "application/zip")
       })# end observeEent
     
 } #end of server

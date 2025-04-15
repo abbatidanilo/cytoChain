@@ -15,7 +15,7 @@ library(tidyverse)
 library(lubridate)
 library(plotly)
 library(RColorBrewer)
-library(reshape2)
+library(reshape2) 
 library(rhandsontable)
 library(ggrepel)
 #library(heatmaply)
@@ -28,6 +28,7 @@ library(streamgraph) #devtools::install_github("hrbrmstr/streamgraph")
 library(ggpubr)
 library(fs)
 library(audio)
+library(rstatix)
 
 #library(openCyto)
 #library(flowViz)
@@ -961,34 +962,31 @@ tabtSNEeva <- tabPanel("Map evaluation", icon =icon("schlix"),
 ######################## Clustering TabPanel -----------------------------
 
 tabClust <- tabPanel("Clustering", icon =icon("object-ungroup"), 
-                     h4("In this section you start the clustering analysis. Currently, one of the most used clustering algorithm used in cytometry is 
+                     p("In this section you start the clustering analysis. Currently, one of the most used clustering algorithm used in cytometry is 
                        (", tags$a(
                            href="https://bioconductor.org/packages/release/bioc/html/FlowSOM.html", "flowSOM"), ") ", "because is by far, the best in 
                          terms of accuracy and in terms of resource-demanding"),
-                     h4("In brief, flowSOM is based on the ", strong("Self Organized Map - (SOM)"), "algorithm, a type of artificial neural network 
-                     (ANN). It's an unsupervised learning approach which uses as the input training samples, the space of the events. The product is 
-                     a two-dimensional discretized representation of the input space of the training samples, called a 'Kohonen map' (by the name of 
-                     the finnish mathematician Teuvo Kohonen). It's very much used in imaging recognition, and other applications."),  
-                     h4("You can find some good introduction to the algorithm in the ", tags$a(
-                         href="https://en.wikipedia.org/wiki/Self-organizing_map", "related wikipedia page"), ", and also in the following pages: ",
+                     p("In brief, flowSOM is based on the ", strong("Self Organized Map - (SOM)"), "algorithm, a type of artificial neural network 
+                     (ANN) an unsupervised learning approach which uses as the input training samples, the space of the events. The product is 
+                     a two-dimensional discretized representation of the input space of the training samples, called a 'Kohonen map'. You can find 
+                       some good introduction to the algorithm in the ", tags$a(href="https://en.wikipedia.org/wiki/Self-organizing_map", 
+                                                                                "related wikipedia page"), ", and also in the following pages: ",
                         tags$a(href="https://annalyzin.wordpress.com/2017/11/02/self-organizing-map/", "SELF-ORGANIZING MAPS TUTORIAL"), 
                         "and in the ", tags$a(href="https://www.superdatascience.com/blogs/the-ultimate-guide-to-self-organizing-maps-soms/", 
-                                              "The Ultimate Guide to Self Organizing Maps (SOM's)"), "."),
-                     h4("Like all the artificial networks based algorithms, the production of SOM's works better with a lot of events and it is 
-                     tipically set with a large number of clusters - larger than what is usually set by other types of clustering tecnique or the 
-                     amount which is possible to foresee within the 'Metadata and essays' workflow by the projections available in the 
-                     'flowSet evalution' tabs. For this reason it is essential to reduce the amount of clusters with some meta-clustering algorithm 
+                                              "The Ultimate Guide to Self Organizing Maps (SOM's)"), ". Like all the AI based algorithms, 
+                                              the production of SOM's works better with a lot of events and it is tipically set with a large number 
+                                              of clusters - For this reason it is essential to reduce the amount of clusters with some meta-clustering algorithm 
                      which will group the intial amount to a less numerous set. That's why the meta-clustering is an essential step in this wokflow, 
-                        while using other clustering approaches, this addistional step is often left out."),br(),
-                     h4("Another valuable clustering algorithm is ", strong("Phenograph"), ", in the two different implementations ", 
+                        while using other clustering approaches, this additional step is often left out."),
+                     p("Another valuable clustering algorithm is ", strong("Phenograph"), ", in the two different implementations ", 
                      strong("Rphenograph"), " and the faster ", strong("FastPG"), "which could perform better in terms of accuracy for 
                      little experiments (with less than half a million events). You cannot choose the amount of clusters you want, but is the 
                      Phenograph itself which select the best number of clusters based on the number of nearest neighbours events. The modularity,
                         which is one of Phenograph outcome is a measure of the connectedness of a clustered network. When comparing different 
-                        clusterings of the same network (same 'K'), the one with the higher modularity is better"),br(),
-                     h3("Attention: The execution of the clustering process resets all the data related to previous meta-clustering and labeling 
-                     processes (if already perfomed)"),
-                     h3("Start from here when you set up a brand new analysis among those available, namely:",
+                        clusterings of the same network (same 'K'), the one with the higher modularity is better"),
+                     p(strong("Attention: The execution of the clustering process resets all the data related to previous meta-clustering and labeling 
+                     processes (if already perfomed)")),
+                     p("Start from here when you set up a brand new analysis among those available, namely:",
                         tags$ol(tags$li("Clustering & Meta-clustering - follow in this order: ", strong("Clustering "),">> ", 
                                         strong("Meta-Clustering "), ">> ", strong("Mapping "), ">> ..."),
                                 tags$li("Clustering & Labeling: follow in this order: ", strong("Clustering "), ">> ", strong("Labeling I "), ">> ", 
@@ -996,6 +994,66 @@ tabClust <- tabPanel("Clustering", icon =icon("object-ungroup"),
                                 tags$li("Clustering & Labeling & Meta-clustering - follow in this order: ", strong("Clustering "), ">> ", 
                                         strong("Labeling I "), ">> ", strong("Meta-clustering "), ">> ", strong("Mapping "), ">> ", strong("Labeling II "),
                                         ">>..."))),br(),
+                     
+                     p(strong("Additional notes on the high dimensional analysis workflow")),
+                     p("The high dimensional analysis workflow provides a clustering operation (using one of the selected clustering 
+                             algorithm) which may be followed by a meta-clustering. Reducing the amount of groups of similar events to a reasonable 
+                             number of homogeneous sets could help in simplifying the analysis the data results, the map plots and so on. We named 
+                             the operation of mapping a set of edited phenotypes (by the phenotype table entered in the 'Edit Metadata' tab) to the 
+                             various calculated clusters, the ", strong("labeling"), "operation. It is possible to map the various entries expressed 
+                             by the phenotype matrix to the clusters (within the 'Labeling I' tab) and to further map the phenotypes in the 
+                             meta-clusters (within the 'Labeling II' tab)."),
+                     p("The main high dimensional analysis strategies in this workflow are:", 
+                       tags$ol(tags$li("1.	Clustering + Meta-clustering "),
+                               tags$li("2.	Clustering + Label "), 
+                               tags$li("3.	Clustering + Label + Meta-clustering"),)), 
+                     p(strong("- 1: Clustering + Meta-clustering: "), "Let’s suppose that you do not have any idea about the possible 
+                             phenotypes which could be present inside your experiment. Of course you select a certain panel to get some results 
+                             from your experiment but as often happens, apart from some set of lineage markers, it could be difficult to compose a 
+                             proper data frame to enter in the 'Metadata and Assays'. Another possibility is that you just do not care about any 
+                             specific phenotype and this is a common case especially in high dimensional flow cytometry analysis when you just set 
+                             up a big panel with more than 20 markers without dealing with any specific indication about the outcome of your 
+                             experiment. In this case the clustering algorithm will split up your total set of event (collected in a single 
+                             concatenated flowFrame) assigning each of them to a specific cluster of a set of 'Num_cluster': so then, each event 
+                             belonging to a cluster will be assigned an additional dimension (a clusterId). Since most of times, especially with 
+                             very complex experiments, you will deal with a lot of clusters, it is always better to reduce this number of clusters 
+                             with the meta-clustering operation. The meta-clustering operation will just re-group each single cluster within a 
+                             meta-cluster, namely a “cluster of clusters. "),  
+                     p(strong("2.	Clustering + Label: "), "The meta-clustering could reduce the number of entries and thus simplifying 
+                             all the analysis but, as a drawback, it can reduce the detailed sub-setting introduced by the selected clustering 
+                             algorithm. In fact, since a cluster could have a certain median expression for each single channel, a meta-cluster will 
+                             have a median of a set of clusters collecting altogether more groups of events. Furthermore, while a panel of N 
+                             channels could have 2^N combinations corresponding to the number of different phenotypes, a clustering algorithm 
+                             calculating the expression of K clusters while discriminate K > M number of phenotypes (in M is the number of 
+                             meta-clusters). This strategy is suitable in those cases in which it is important to find a very specific phenotype 
+                             which can be formed with very few amount of events, namely a case of rare events. In this case it can be meaningful to 
+                             skip the meta-clustering and concentrate just to the clustering output with K (> M) different groups of events. On top 
+                             of this advantage you can also put a label to your phenotype in the related table entry (through the 'Edit Metadata' 
+                             tab). Unlike the previous strategy, you have to enter the phenotype description table in order to perform the labeling 
+                               action"),
+                     p(strong("3.	Clustering + Label + Meta-clustering: "), "This is the most complete analysis in which it is possible to 
+                             join both clustering and meta-clustering. Like in the previous analysis strategy you have to enter the phenotype table 
+                             first. In this way both clusters and meta-clusters phenotype will be named as per your edited table."), 
+                     p(strong("Additional notes on some important parameters for this workflow")), 
+                     p("Along with the number of cluster or meta-cluster, there are two pairs of important parameter to take into account, 
+                               collected here on the left sidebar under the name of ",strong("Labeling parameters"), "because they tune how the 
+                               various phenotypes are classified. The heatmaps produced under the ", strong("Labeling I "), "and the ", 
+                       strong("Labeling II "), "tabs are based on the normalization of the expression matrix for the selected markers of the 
+                               events grouped by the clustering (or meta-clustering) algorithm. The first pair of parameters are the ", 
+                       strong("minQuantile/maxQuantile "), "that is the lower/upper limits for the zero transformation. These two thresholds 
+                               (which we recommend to set them symmetrically like for the default setting: minQuantile = 0.05 and maxQuantile = 0.95) 
+                               affect the normalization (like for the zero transfomation - see the manual), setting the threshold for the 
+                               positive/negative MFI (Mean Fluorescent Intensity) values. As the ranges of marker intensities can vary substantially, 
+                               they set the low and the high percentiles as a boundary to force the marker MFI to 0 or to 1. This normalization of the 
+                               transformed data can give better representation of relative differences in marker expression between annotated cell 
+                               populations in the heatmaps. This effect can be skipped checking the related checkbox (no Quantiles handling)."),
+                     p("The other two parameters can be very sensitive as they constrained the normalized MFI which can be 
+                               greater/less than the ", strong("MFI positive/negative threshold. "), "By default a phenotype is considered “+” (aka 
+                               positively expressed) for certain marker if the normalized MFI is greater than 0.5 and considered “-” (aka negatively 
+                               expressed) if the normalized MFI is inferior than 0.5. With a more stringent threshold (e.g: 0.6 and 0.4) you will 
+                               identify less cluster (or meta-cluster) as belonging to a certain phenotype: you will have more “undetermined” type of 
+                               cells, but the ones which can be assigned are more likely to be truly positive (or truly negative)"),
+                     
                      h4("Push the button to run the selected clustering algorithm"),br(),
                      actionButton("runClust", label = "Run the selected clustering algorithm", icon("paper-plane"), 
                                   style="color: #fff; background-color: #ff0000; border-color: #2e6da4"),br(),
@@ -1013,7 +1071,7 @@ tabClust <- tabPanel("Clustering", icon =icon("object-ungroup"),
                              imageOutput(outputId = "compPlot", width = "1000px", height = "1200px") %>% withSpinner(), br(),
                              downloadButton(outputId = "downloadClust",label = "download the plots"),br(),
                              
-                             h4("Additional notes on the flowSOM results:"),
+                             h4(strong("Additional notes on the flowSOM results:")),
                              p("Sofie Van Gassen, the author of the flowSOM package, implemented an additional feature along with the SOM's: the
                              organization of the resulting clustering in a ", strong("Minimal Spanning Tree (MST)"), ". A MST is an acyclic graph
                              which connects the nodes of a graph in such a way that the sum of the weights of the branches is minimal. By doing 
@@ -1026,72 +1084,8 @@ tabClust <- tabPanel("Clustering", icon =icon("object-ungroup"),
                              p("It is important to interpret the flowSOM's MST, but not just the marker's related content but even its shape, to
                              infer the algorithm outcomes. In general, a more twisted and inconsistent (namely 'a not so acyclic') graph tree is 
                              bad signal for your analysis: a good clustering result is a linear MST in which each branch can groups several clusters 
-                               in a meta-cluster. Also notice the heatmap's dendograms and their relationship with the MST's branches"),br(),
+                               in a meta-cluster. Also notice the heatmap's dendograms and their relationship with the MST's branches")),br(),
                              
-                             h4("Additional notes on the high dimensional analysis workflow"),
-                             p("The high dimensional analysis workflow provides a clustering operation (using one of the selected clustering 
-                             algorithm) which may be followed by a meta-clustering. Reducing the amount of groups of similar events to a reasonable 
-                             number of homogeneous sets could help in simplifying the analysis the data results, the map plots and so on. We named 
-                             the operation of mapping a set of edited phenotypes (by the phenotype table entered in the 'Edit Metadata' tab) to the 
-                             various calculated clusters, the ", strong("labeling"), "operation. It is possible to map the various entries expressed 
-                             by the phenotype matrix to the clusters (within the 'Labeling I' tab) and to further map the phenotypes in the 
-                             meta-clusters (within the 'Labeling II' tab). In any case the cluster/meta-cluster option is not the only way to 
-                             perform a phenotype analysis. Let’s introduce the three different analysis strategies:"),
-                             p("The main high dimensional analysis strategies in this workflow are:", 
-                               tags$ol(tags$li("1.	Clustering + Meta-clustering "),
-                                       tags$li("2.	Clustering + Label "), 
-                                       tags$li("3.	Clustering + Label + Meta-clustering"),)), br(),
-                             p(strong("- 1: Clustering + Meta-clustering: "), "Let’s suppose that you do not have any idea about the possible 
-                             phenotypes which could be present inside your experiment. Of course you select a certain panel to get some results 
-                             from your experiment but as often happens, apart from some set of lineage markers, it could be difficult to compose a 
-                             proper data frame to enter in the 'Metadata and Assays'. Another possibility is that you just do not care about any 
-                             specific phenotype and this is a common case especially in high dimensional flow cytometry analysis when you just set 
-                             up a big panel with more than 20 markers without dealing with any specific indication about the outcome of your 
-                             experiment. In this case the clustering algorithm will split up your total set of event (collected in a single 
-                             concatenated flowFrame) assigning each of them to a specific cluster of a set of 'Num_cluster': so then, each event 
-                             belonging to a cluster will be assigned an additional dimension (a clusterId). Since most of times, especially with 
-                             very complex experiments, you will deal with a lot of clusters, it is always better to reduce this number of clusters 
-                             with the meta-clustering operation. The meta-clustering operation will just re-group each single cluster within a 
-                             meta-cluster, namely a “cluster of clusters. One of the main outcome could be the table with all the possible phenotype 
-                             in each calculated meta-cluster which is possible to obtain from the “Meta-clustering” tab in the workflow: a table in 
-                             .csv format which will collect the phenotype description. The translation in terms of phenotypes could be in turn the 
-                             input in the “Metadata and Assays” workflow as a phenotype table to be further studied in a subsequent session."), br(), 
-                             p(strong("2.	Clustering + Label: "), "The meta-clustering could reduce the number of entries and thus simplifying 
-                             all the analysis but, as a drawback, it can reduce the detailed sub-setting introduced by the selected clustering 
-                             algorithm. In fact, since a cluster could have a certain median expression for each single channel, a meta-cluster will 
-                             have a median of a set of clusters collecting altogether more groups of events. Furthermore, while a panel of N 
-                             channels could have 2^N combinations corresponding to the number of different phenotypes, a clustering algorithm 
-                             calculating the expression of K clusters while discriminate K > M number of phenotypes (in M is the number of 
-                             meta-clusters). This strategy is suitable in those cases in which it is important to find a very specific phenotype 
-                             which can be formed with very few amount of events, namely a case of rare events. In this case it can be meaningful to 
-                             skip the meta-clustering and concentrate just to the clustering output with K (> M) different groups of events. On top 
-                             of this advantage you can also put a label to your phenotype in the related table entry (through the 'Edit Metadata' 
-                             tab). Unlike the previous strategy, you have to enter the phenotype description table in order to perform the labeling 
-                               action"),br(),
-                             p(strong("3.	Clustering + Label + Meta-clustering: "), "This is the most complete analysis in which it is possible to 
-                             join both clustering and meta-clustering. Like in the previous analysis strategy you have to enter the phenotype table 
-                             first. In this way both clusters and meta-clusters phenotype will be named as per your edited table. This last and most
-                             complete strategy could be more robust in terms of results on the single meta-cluster"), br(),
-                             h4("Additional notes on some important parameters for this workflow"), 
-                             p("Along with the number of cluster or meta-cluster, there are two pairs of important parameter to take into account, 
-                               collected here on the left sidebar under the name of ",strong("Labeling parameters"), "because they tune how the 
-                               various phenotypes are classified. The heatmaps produced under the ", strong("Labeling I "), "and the ", 
-                               strong("Labeling II "), "tabs are based on the normalization of the expression matrix for the selected markers of the 
-                               events grouped by the clustering (or meta-clustering) algorithm. The first pair of parameters are the ", 
-                               strong("minQuantile/maxQuantile "), "that is the lower/upper limits for the zero transformation. These two thresholds 
-                               (which we recommend to set them symmetrically like for the default setting: minQuantile = 0.05 and maxQuantile = 0.95) 
-                               affect the normalization (like for the zero transfomation - see the manual), setting the threshold for the 
-                               positive/negative MFI (Mean Fluorescent Intensity) values. As the ranges of marker intensities can vary substantially, 
-                               they set the low and the high percentiles as a boundary to force the marker MFI to 0 or to 1. This normalization of the 
-                               transformed data can give better representation of relative differences in marker expression between annotated cell 
-                               populations in the heatmaps. This effect can be undone fixing the values to 0 (for the minQuantile) or to 1 (for the 
-                               maxQuantile)."),
-                             p("The other two parameters can be very sensitive as they constrained the normalized MFI which can be 
-                               greater/less than the ", strong("MFI positive/negative threshold. "), "By default a phenotype is considered “+” (aka 
-                               positively expressed) for certain marker if the normalized MFI is greater than 0.5 and considered “-” (aka negatively 
-                               expressed) if the normalized MFI is inferior than 0.5. With a more stringent threshold (e.g: 0.6 and 0.4) you will 
-                               identify less cluster (or meta-cluster) as belonging to a certain phenotype: you will have more “undetermined” type of 
-                               cells, but the ones which can be assigned are more likely to be truly positive (or truly negative)")),
                              conditionalPanel(
                                  condition = "input.ClustAlgo == 'Rphenograph'||input.ClustAlgo == 'FastPG'",
                                  tags$hr(style="border-color: green;"), br(),
@@ -1172,7 +1166,9 @@ tabLabelClust <- tabPanel("Labeling I", icon =icon("blender"), value = "Clusteri
                            ones"),
                          p("Another view of the labeled results can be seen within the 'labeling II' tab. In case of meta-cluster execution, the 
                            labeling is performed grouping the clusters in meta-clusters, while skipping the meta-clustering, the labeling is 
-                           executed just evaluating the median expression of the various population."))))
+                           executed just evaluating the median expression of the various population."),
+                         downloadButton(outputId = "downloadClustAll",label = "download all the produced analysis data"),br(),br()
+                         )))
 
 
 ######################## MetaClust TabPanel -----------------------------
@@ -1223,6 +1219,9 @@ tabMetaClust <- tabPanel("Meta-Clustering", icon =icon("object-group"),
                                  h4("Notice that, in case you handled the original flowSet within the 'flowSet optimization workflow', the 
                                  produced flowFrame (a unique '.fcs' file) will collect, along with the new computed dimensions, also the 
                                     original channels"),br(),#),br(),
+                                 downloadButton(outputId = "downloadMetaAll", 
+                                                label = "download all the produced analysis data"),br(),
+                                 
                                  h3(textOutput("checktxt_saveMetaClust")), br(),    
                                     conditionalPanel(
                                     condition = ("output.saveMetaClust_panelStatus"),
@@ -1851,10 +1850,14 @@ sidebar_panel_clust <- sidebarPanel(width = 3,
                                         checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon"))),
                                     bsPopover(id = "signature_finding_method", title = paste0("Select your favourite signature finding method")),
                                     
-                                    sliderInput(inputId = "minQuantile", label = "minQuantile: select the lower limit for the zero transformation", 
-                                                min = 0.0, max = 1.0, value = 0.05, ticks = TRUE, dragRange = FALSE),
-                                    sliderInput(inputId = "maxQuantile", label = "maxQuantile: select the upper limit for the zero transformation", 
-                                                min = 0.0, max = 1.0, value = 0.95, ticks = TRUE, dragRange = FALSE),
+                                    checkboxInput(inputId = "no_Quant", label = "no Quantiles handling", value = FALSE),
+                                    bsPopover(id = "no_Quant", 
+                                              title = paste0("Select this to exclude the effect of quantiles on the heatmaps' expression values")),
+                                    
+                                    sliderInput(inputId = "minQuantile", label = "minQuantile: max effect when set to 0.5", 
+                                                min = 0.01, max = 0.5, value = 0.05, ticks = TRUE, dragRange = FALSE),
+                                    sliderInput(inputId = "maxQuantile", label = "maxQuantile: max effect when set to 0.5", 
+                                                min = 0.5, max = 1.0, value = 0.95, ticks = TRUE, dragRange = FALSE),
                                     bsPopover(id = "maxQuantile", title = "min and max quantile", 
                                     content = paste0("The minQuantile and the maxQuantile parameter will act upon the heatmap values calculation")),
                                     
@@ -2150,8 +2153,11 @@ tags$a(href="http://bioconductor.org/help/course-materials/2017/BioC2017/Day2/Wo
                           URL: https://github.com/jkrijthe/Rtsne"), br(),  br(),
                 p("for ",  strong('umap')),
                 shiny::em("Tomasz Konopka (2019). umap: Uniform Manifold Approximation and Projection. https://CRAN.R-project.org/package=umap"),
-                
                 tags$hr(style="border-color: green;"),br(),  br(),
+                p("for ",  strong('rstatix')),
+                shiny::em("Alboukadel Kassambara. rstatix: Pipe-Friendly Framework for Basic Statistical Tests. https://cran.r-project.org/web/packages/rstatix/"),
+                tags$hr(style="border-color: green;"),br(),  br(),
+
                 p("I cannot forget to mention all the effort made by members of the R (and Python) developers community for all the features of 
                   such an indispensable set of accessory libraries:"),
                 p("for ",  strong('DT')),
@@ -2204,11 +2210,12 @@ tags$a(href="http://bioconductor.org/help/course-materials/2017/BioC2017/Day2/Wo
                 shiny::em("Dean Attali (2020). shinyjs: Easily Improve the User Experience of Your Shiny Apps in Seconds. 
                           https://CRAN.R-project.org/package=shinyjs"), br(),
 
-p("This is cytoChain_4.20 - the fcs samples are still handled in memory as a flowSet"),
-p("In this version, the new implementation of the density study, to dig inside each of the cluster and to evaluate the possibility to increase the number of clusters"), 
-p("It also enhances the heatmap generation - here the heatmap is based on a common minimum point on the sum of densities which holds for ever cluster"),
-p("The automatic analysis with no meta-clustering still to be finalized (it works only with flowSOM because NMC > K"),
-p("New feature (to be fixed): To evaluate the clusters quality by the silhouette function of the cluser package")
+p("This is cytoChain_4.36 - the fcs samples are still handled in memory as a flowSet"),
+p("In this version, the new implementation, along with the t-student test for each cluster/metacluster and each valuable tag, a new Effect Size 
+  (https://www.rdocumentation.org/packages/rstatix/versions/0.7.2) evaluation is performed"), 
+p("Saving of the two metadata files (mt = meta_sample.csv and mk =  meta_marker.csv)"),
+p("The new implementation of the density study, to dig inside each of the cluster and to evaluate the possibility to increase the number of clusters"), 
+
 
 ))#end of tabItem
 )#end of dashBoardBody
