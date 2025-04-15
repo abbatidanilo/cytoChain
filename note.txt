@@ -1,0 +1,126 @@
+cytoChain4.31
+done(*)
+Perchè il median trovato con il metodo consolidato è diverso dal median trovato con la fuzione cluster_signature (vedi grafici della densità, linea verde verticale)? Anche la percentuale ed il numero di eventi dei cluster è sbagliata 
+PRovare a mostrare meglio l'alberatura a sinistra sul metacluster heatmap 
+* Aggiustare l'opzione density study in modo da mostrare solo i grafici (aumentati di informazioni quali picco e media/mediana) per cluster per marcatore.
+
+* effect size: implement it along with the p-value test. See https://rpkgs.datanovia.com/rstatix/reference/cohens_d.html. The produced data frame donloading is not implemented yet. That's important because the magnitude is important and it depends on calculated d |d| < 0.2 "negligible", |d| < 0.5 "small", |d| < 0.8 "medium", otherwise "large".
+In all abs(d) provides a measure of the magnitude of the difference between the samples' groups: the bigger is the more different is. Questo commento deve essere aggiunto così come la maniera di scaricare le tabelle t_test, per ora disponibili solo sula produzione automatica dell'analisi
+
+* DepecheR: Aggiungere tutti i grafici come nella https://bioconductor.org/packages/release/bioc/vignettes/DepecheR/inst/doc/DepecheR_test.html
+
+
+other implementations: see https://www.genepattern.org/flow-cytometry-gating-and-clustering#gsc.tab=0
+
+check sui meta_data prima tabella: tim/step checking with no feedback or any control
+implementare t-student per cluster
+cluster_signature implementation (from cytoAdvance4.12) 
+Verify validate() mechanism into the meta_sample table 
+video tutorial https://youtu.be/0KMfPESrNSc
+verify https://community.rstudio.com/t/functions-with-the-same-identical-names-in-r-packages/43680 using also https://towardsdatascience.com/r-you-sure-youre-using-this-package-8ce265a990b0 (NCmisc::list.functions.in.file())
+clustertend implementation (https://towardsdatascience.com/clustering-evaluation-strategies-98a4006fcfc)
+
+Shynifeedback usage 
+
+On the manual: tsne time = kilo_eventi/30 = min
+temp flowVS = 20*11*nr.dimension/60 = min
+8*21=168 sec (9k)
+5*21=105 sec (4.5k)
+5 * 21 *k_events/1000
+
+Online:
+warning: using reticulate but python was not specified; will use python at /usr/bin/python3 
+2020-03-14T14:15:02.921512+00:00 shinyapps[1946501]: Did you forget to set the RETICULATE_PYTHON environment variable in your .Rprofile before publishing?
+On installation
+
+new downsampling algorithms to add: https://github.com/talegari/solitude e https://github.com/david-cortes/isotree
+
+try to substitute shinycssloaders (new 0.3.0 versione does not work)
+
+implement umap multithreading or uwot
+
+try to implement isotree and stray (outliers detection packages) for the downsampling
+
+implement the command/parameter history 
+
+try to collect more info from tsne output
+
+
+for the cytoset version:
+	the time_step check su UI.R and checking on server.R
+	the trimws in edit metadata
+	accept = ".zip" in fileInput() 
+	the cheking for the loading_fS (both in fcs e zip load format) fSresult <- paste0("The sample nr. ", as.character(i), "  does not contain any event")
+	sample_score$sample_id <- as.character(rep(fFvectorName[i], 101)) con  sample_score$sample_id <- as.character(rep(fFvectorName[i], nrow(sample_score))) 
+	cytoset i controlli inputId = "map_limit" e inputId = "mapMax"
+	the event resume: metaResume(capture.output(list(sample_event, tag1_event, tag2_event, tag3_event, tag4_event))) e i corrispondenti output$downloadmetaResume e  capture.output(metaResume(), file = "./tmpdata/meta_resume.csv")
+	limit = input$map_limit, maxCell = input$mapMax into map_gen function
+	check changes into map_gen and map_plot_comp on server.R in if(length(dI.map())==2). t will become: if(length(dI.map())==3)
+	changes on file ui.r
+...
+	
+https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html
+https://rpubs.com/pg2000in/ClusterValidationStatistics but it implies the re-clustering on only some specific algorithms
+Try the clValid or the Cluster R packages for cluster validation
+https://stats.stackexchange.com/questions/21807/evaluation-measures-of-goodness-or-validity-of-clustering-without-having-truth
+
+deployment:
+https://shiny.rstudio.com/articles/deployment-local.html
+https://rstudio.github.io/learnr/publishing.html
+https://neerajdhanraj.medium.com/easy-steps-to-develop-and-publish-your-first-r-package-e5f1a5c5f04c
+https://www.mango-solutions.com/packaging-shiny-applications-a-deep-dive/
+https://www.linode.com/docs/guides/how-to-deploy-rshiny-server-on-ubuntu-and-debian/
+https://www.r-bloggers.com/2017/12/serving-shiny-apps-in-the-internet-with-your-own-server/
+https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/
+https://www.charlesbordet.com/en/guide-shiny-aws/#
+https://github.com/rstudio/shiny_example
+https://github.com/wleepang/DesktopDeployR
+https://cyberhelp.sesync.org/quickstart/how-do-i-publish-a-shiny-app-on-the-sesync-server.html
+https://www.reddit.com/r/Rlanguage/comments/aljcf6/anyone_have_experience_with_deploying_shiny_apps/
+stand-alone deployment
+https://engineering-shiny.org/
+https://github.com/ficonsulting/RInno
+https://www.youtube.com/watch?v=ARrbbviGvjc
+https://chasemc.github.io/electricShine/
+
+console messages in real time:
+The procedure must be interrupted. Check the following: 
+
+https://stackoverflow.com/questions/30474538/possible-to-show-console-messages-written-with-message-in-a-shiny-ui
+https://gist.github.com/jcheng5/3830244757f8ca25d4b00ce389ea41b3
+https://rdrr.io/r/utils/capture.output.html
+https://adv-r.hadley.nz/conditions.html
+http://adv-r.had.co.nz/beyond-exception-handling.html
+http://adv-r.had.co.nz/Exceptions-Debugging.html
+to convert try with tryCatch:
+https://stackoverflow.com/questions/12193779/how-to-write-trycatch-in-r
+
+icon:
+https://codetheweb.blog/html-icons/
+https://stackoverflow.com/questions/49498574/display-icon-in-the-title-bar-of-shiny-app-page
+https://shiny.rstudio.com/reference/shiny/0.14/icon.html
+https://stackoverflow.com/questions/43303389/r-shiny-publishing-leaflet-maps-with-custom-icons
+https://www.youtube.com/watch?v=yq4LfIOgT2A
+
+Input to asJSON(keep_vec_names=TRUE) is a named vector. 
+In a future version of jsonlite, this option will not be supported, and named vectors will be translated into arrays instead of objects. 
+If you want JSON object output, please use a named list instead. See ?toJSON
+
+putting multiple ggplots together, the (patchwork) package: https://patchwork.data-imaginist.com/articles/patchwork.html
+#??? http://htmlpreview.github.io/?https://github.com/KrishnaswamyLab/phateR/blob/master/inst/examples/bonemarrow_tutorial.html
+#??? http://cole-trapnell-lab.github.io/monocle-release/ 
+#??? https://stat.ethz.ch/R-manual/R-devel/library/base/html/Version.html 
+#??? http://htmlpreview.github.io/?https://github.com/KrishnaswamyLab/phateR/blob/master/inst/examples/bonemarrow_tutorial.html 
+https://github.com/jlmelville/smallvis
+try Mean-Shift Clustering (meanShiftR) o ancora DBSCAN (dbscan)  per clustering of tsne map
+see #https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68
+
+independent app:
+https://github.com/ficonsulting/RInno
+https://stackoverflow.com/questions/15884975/possible-to-run-rshiny-app-without-opening-an-r-environment
+
+other apps:
+CytoPipeline & CytoPipelineGUI: https://www.biorxiv.org/content/10.1101/2023.10.10.561699v1
+https://dillonhammill.github.io/CytoExploreR/
+https://crusty.humanitas.it/execute/Example2
+
